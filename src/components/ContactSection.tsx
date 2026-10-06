@@ -1,303 +1,257 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { 
-  MapPin, 
   Phone, 
   Mail, 
   Clock, 
-  MessageSquare, 
-  ChevronDown, 
-  ChevronUp, 
-  Send, 
-  CheckCircle2 
+  MapPin, 
+  Instagram, 
+  ShoppingBag, 
+  Truck, 
+  ShieldCheck, 
+  ExternalLink,
+  MessageCircle,
+  Package,
+  Headphones,
+  CheckCircle2,
+  Sparkles
 } from "lucide-react";
-
-const FAQS = [
-  {
-    question: "Como funciona a compra no atacado da AM FIT?",
-    answer:
-      "Nosso atacado é direto de fábrica com pedido mínimo de apenas R$ 300,00 ou a partir de 6 peças sortidas. Você pode mesclar modelos, cores e tamanhos à sua escolha, garantindo margens de até 120% na revenda.",
-  },
-  {
-    question: "Posso comprar apenas 1 ou 2 peças no varejo?",
-    answer:
-      "Sim! No varejo não há pedido mínimo. Você pode escolher qualquer peça para o seu próprio treino, com pagamento em até 6x sem juros ou 5% de desconto no PIX e entrega para todo o Brasil.",
-  },
-  {
-    question: "As peças têm garantia de transparência?",
-    answer:
-      "Absolutamente. Todas as nossas calças e conjuntos são confeccionados em poliamida de alta gramatura (300g a 340g) com tecnologia de trama densa, garantindo zero transparência até mesmo nos agachamentos mais profundos.",
-  },
-  {
-    question: "Como é feito o envio e qual o prazo de entrega?",
-    answer:
-      "Despachamos via Correios (Sedex e PAC) e transportadoras parceiras (Jadlog, Total Express) em até 24 horas úteis após a confirmação do pagamento. Você recebe o código de rastreamento no WhatsApp e e-mail.",
-  },
-  {
-    question: "Como solicitar a primeira troca grátis?",
-    answer:
-      "Caso a peça não tenha o tamanho ideal ou você deseje trocar a cor, basta nos chamar no WhatsApp em até 7 dias corridos após o recebimento. Nós enviamos a autorização de postagem gratuita para você.",
-  },
-];
+import { STORE_CONFIG, getWhatsAppLink } from "@/config/store";
 
 export const ContactSection: React.FC = () => {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [formSent, setFormSent] = useState(false);
-  const [formData, setFormData] = useState({
-    nome: "",
-    whatsapp: "",
-    email: "",
-    tipoInteresse: "atacado",
-    mensagem: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormSent(true);
-    setTimeout(() => {
-      setFormSent(false);
-      setFormData({
-        nome: "",
-        whatsapp: "",
-        email: "",
-        tipoInteresse: "atacado",
-        mensagem: "",
-      });
-    }, 4000);
-  };
-
   return (
-    <section id="contato" className="py-20 bg-am-gray-50 border-t border-am-gray-200">
+    <section id="contato" className="py-12 sm:py-16 bg-zinc-50/70 border-t border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         
-        {/* Section Title */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 text-am-magenta font-extrabold text-xs tracking-widest uppercase mb-1">
-            <MessageSquare size={14} />
-            Atendimento Exclusivo
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-am-magenta-light border border-am-magenta-border text-am-magenta font-extrabold text-xs tracking-wider uppercase mb-2">
+            <Headphones size={14} />
+            Canais Oficiais & Suporte
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-am-black tracking-tight uppercase">
-            FALE COM A NOSSA EQUIPE
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-am-black tracking-tight uppercase">
+            ATENDIMENTO & INFORMAÇÕES DA LOJA
           </h2>
-          <p className="text-sm text-zinc-500 mt-2">
-            Estamos prontos para atender você seja para tirar dúvidas, receber a tabela de atacado ou rastrear seu pedido.
+          <p className="text-xs sm:text-sm text-zinc-500 mt-2 max-w-xl mx-auto">
+            Fale diretamente com a equipe de fábrica ou acesse nossos canais de compra e redes oficiais.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* 1. Canais Oficiais de Acesso (WhatsApp, Instagram, Shopee, Mercado Livre) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
           
-          {/* Info cards and FAQ */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* Card WhatsApp */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                  <MessageCircle size={24} />
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Online
+                </span>
+              </div>
+              <h3 className="font-black text-base text-zinc-900 mb-1">WhatsApp Oficial</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                Atendimento direto com vendedoras para pedidos de atacado, varejo e dúvidas rápidas.
+              </p>
+              <div className="text-xs font-bold text-zinc-800 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-200 mb-4 font-mono">
+                {STORE_CONFIG.contact.whatsappFormatted}
+              </div>
+            </div>
+            <a
+              href={getWhatsAppLink("Olá! Gostaria de falar com o atendimento da AM FIT.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+            >
+              <span>Chamar no WhatsApp</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+          {/* Card Instagram */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform">
+                  <Instagram size={24} />
+                </div>
+                <span className="inline-flex items-center text-[11px] font-bold text-pink-700 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
+                  Bastidores & Moda
+                </span>
+              </div>
+              <h3 className="font-black text-base text-zinc-900 mb-1">Instagram Oficial</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                Acompanhe provadores, lançamentos semanais, vídeos das peças e dicas de revenda.
+              </p>
+              <div className="text-xs font-bold text-pink-700 bg-pink-50/60 px-3 py-2 rounded-lg border border-pink-200 mb-4 font-mono">
+                {STORE_CONFIG.social.instagram}
+              </div>
+            </div>
+            <a
+              href={STORE_CONFIG.social.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+            >
+              <span>Acessar Instagram</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+          {/* Card Shopee */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#ee4d2d] text-white flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                  <ShoppingBag size={24} />
+                </div>
+                <span className="inline-flex items-center text-[11px] font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+                  Frete & Cupons
+                </span>
+              </div>
+              <h3 className="font-black text-base text-zinc-900 mb-1">Shopee Oficial</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                Compre no varejo com cupons de frete grátis da plataforma e milhares de avaliações 5 estrelas.
+              </p>
+              <div className="text-xs font-bold text-orange-700 bg-orange-50/60 px-3 py-2 rounded-lg border border-orange-200 mb-4">
+                Loja Oficial Verificada
+              </div>
+            </div>
+            <a
+              href={STORE_CONFIG.social.shopeeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 px-4 bg-[#ee4d2d] hover:bg-[#d73f20] text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+            >
+              <span>Ver Loja na Shopee</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+          {/* Card Mercado Livre */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#ffe600] text-zinc-900 flex items-center justify-center shadow-md shadow-yellow-500/20 group-hover:scale-105 transition-transform">
+                  <Package size={24} />
+                </div>
+                <span className="inline-flex items-center text-[11px] font-bold text-amber-800 bg-yellow-50 px-2.5 py-0.5 rounded-full border border-yellow-200">
+                  Entrega Full
+                </span>
+              </div>
+              <h3 className="font-black text-base text-zinc-900 mb-1">Mercado Livre</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                Envio imediato, garantia total de entrega e compra garantida com Mercado Pago.
+              </p>
+              <div className="text-xs font-bold text-zinc-800 bg-yellow-50/60 px-3 py-2 rounded-lg border border-yellow-200 mb-4">
+                Mercado Líder Oficial
+              </div>
+            </div>
+            <a
+              href={STORE_CONFIG.social.mercadoLivreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 px-4 bg-zinc-900 hover:bg-black text-[#ffe600] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+            >
+              <span>Ver Mercado Livre</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+        </div>
+
+        {/* 2. Informações Gerais da Loja & Estrutura Expandida */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-zinc-200 shadow-sm">
+          <div className="flex items-center gap-2 pb-5 mb-6 border-b border-zinc-100">
+            <Sparkles size={20} className="text-am-magenta" />
+            <h3 className="font-black text-lg sm:text-xl text-am-black uppercase tracking-tight">
+              Informações Gerais & Políticas da Fábrica
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {/* Quick Contact Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              <div className="bg-white p-5 rounded-2xl border border-am-gray-200 shadow-xs flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-am-magenta-light text-am-magenta flex items-center justify-center flex-shrink-0">
-                  <Phone size={22} />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-am-black">WhatsApp / Central</h4>
-                  <p className="text-xs text-zinc-500 mt-0.5">Atendimento rápido das 08h às 18h</p>
-                  <a
-                    href="https://wa.me/5511999999999"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-bold text-am-magenta hover:underline mt-1 inline-block"
-                  >
-                    (11) 99999-9999
-                  </a>
-                </div>
+            {/* 1. Horário de Atendimento */}
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-am-magenta flex items-center justify-center">
+                <Clock size={20} />
               </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-am-gray-200 shadow-xs flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-am-black flex items-center justify-center flex-shrink-0">
-                  <Mail size={22} className="text-am-magenta" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-am-black">E-mail Comercial</h4>
-                  <p className="text-xs text-zinc-500 mt-0.5">Envio de orçamentos e notas</p>
-                  <a
-                    href="mailto:contato@amfitatacado.com.br"
-                    className="text-xs font-bold text-am-black hover:text-am-magenta mt-1 inline-block"
-                  >
-                    contato@amfitatacado.com.br
-                  </a>
-                </div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-am-gray-200 shadow-xs flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-am-black flex items-center justify-center flex-shrink-0">
-                  <Clock size={22} className="text-am-magenta" />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-am-black">Horário de Atendimento</h4>
-                  <p className="text-xs text-zinc-600 mt-0.5">Segunda a Sexta: 08:00 às 18:00</p>
-                  <p className="text-xs text-zinc-400">Sábados: 09:00 às 13:00</p>
-                </div>
-              </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-am-gray-200 shadow-xs flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-am-magenta-light text-am-magenta flex items-center justify-center flex-shrink-0">
-                  <MapPin size={22} />
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-am-black">Fábrica & Showroom</h4>
-                  <p className="text-xs text-zinc-600 mt-0.5">Polo Têxtil / Confecção Própria</p>
-                  <p className="text-xs text-zinc-500">São Paulo - SP | Envio Brasil</p>
-                </div>
-              </div>
-
+              <h4 className="font-black text-sm text-am-black">Horário de Atendimento</h4>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                <strong>Segunda a Sexta:</strong> 08:00 às 18:00<br />
+                <strong>Sábados:</strong> 09:00 às 13:00<br />
+                <span className="text-zinc-400">Exceto domingos e feriados</span>
+              </p>
             </div>
 
-            {/* Interactive FAQ */}
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-am-gray-200 shadow-xs">
-              <h3 className="font-black text-lg text-am-black mb-4 uppercase tracking-wide">
-                Dúvidas Frequentes (FAQ)
-              </h3>
-              
-              <div className="space-y-3">
-                {FAQS.map((faq, index) => {
-                  const isOpen = openFaq === index;
-                  return (
-                    <div 
-                      key={index} 
-                      className="border border-am-gray-200 rounded-xl overflow-hidden transition-colors"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setOpenFaq(isOpen ? null : index)}
-                        className="w-full p-4 text-left font-bold text-sm text-am-black flex items-center justify-between hover:bg-am-gray-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        {isOpen ? (
-                          <ChevronUp size={18} className="text-am-magenta flex-shrink-0" />
-                        ) : (
-                          <ChevronDown size={18} className="text-zinc-400 flex-shrink-0" />
-                        )}
-                      </button>
-
-                      {isOpen && (
-                        <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 leading-relaxed border-t border-am-gray-100 bg-am-gray-50/50">
-                          {faq.answer}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+            {/* 2. Fábrica & Envio */}
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-am-magenta-light text-am-magenta flex items-center justify-center">
+                <MapPin size={20} />
               </div>
+              <h4 className="font-black text-sm text-am-black">Origem & Polo Têxtil</h4>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Confecção própria sediada em São Paulo - SP.<br />
+                Despacho ágil para todos os estados do Brasil via Correios e transportadoras.
+              </p>
+            </div>
+
+            {/* 3. Contato Institucional & E-mail */}
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-am-magenta flex items-center justify-center">
+                <Mail size={20} />
+              </div>
+              <h4 className="font-black text-sm text-am-black">E-mail Comercial</h4>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                <a 
+                  href={`mailto:${STORE_CONFIG.contact.email}`} 
+                  className="font-bold text-am-magenta hover:underline"
+                >
+                  {STORE_CONFIG.contact.email}
+                </a><br />
+                Para envio de notas fiscais, pedidos corporativos e parcerias com lojistas.
+              </p>
+            </div>
+
+            {/* 4. Garantia & 1ª Troca */}
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <ShieldCheck size={20} />
+              </div>
+              <h4 className="font-black text-sm text-am-black">Garantia & 1ª Troca</h4>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Garantia total de Zero Transparência em poliamida de alta gramatura.<br />
+                1ª Troca facilitada em até 7 dias corridos após o recebimento.
+              </p>
             </div>
 
           </div>
 
-          {/* Quick Message Form */}
-          <div className="lg:col-span-5">
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-am-gray-200 shadow-lg">
-              <div className="mb-6">
-                <span className="text-xs font-black text-am-magenta uppercase tracking-wider">
-                  Envie sua Mensagem
-                </span>
-                <h3 className="text-xl font-black text-am-black mt-1">
-                  Atendimento Personalizado
-                </h3>
-                <p className="text-xs text-zinc-500 mt-1">
-                  Preencha seus dados para receber nosso catálogo completo em PDF ou tirar dúvidas.
-                </p>
-              </div>
-
-              {formSent ? (
-                <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2 animate-fadeIn">
-                  <CheckCircle2 size={36} className="text-emerald-600 mx-auto" />
-                  <h4 className="font-black text-emerald-900 text-sm">Mensagem enviada com sucesso!</h4>
-                  <p className="text-xs text-emerald-700">
-                    Nossa equipe entrará em contato via WhatsApp nas próximas horas.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-700 mb-1">
-                      Seu Nome Completo *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.nome}
-                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                      placeholder="Ex: Amanda Silva"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-am-gray-300 text-xs sm:text-sm focus:outline-none focus:border-am-magenta focus:ring-2 focus:ring-am-magenta/20 transition-all text-zinc-900"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-zinc-700 mb-1">
-                        WhatsApp com DDD *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.whatsapp}
-                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                        placeholder="(11) 99999-9999"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-am-gray-300 text-xs sm:text-sm focus:outline-none focus:border-am-magenta focus:ring-2 focus:ring-am-magenta/20 transition-all text-zinc-900"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-zinc-700 mb-1">
-                        E-mail
-                      </label>
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="seu@email.com"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-am-gray-300 text-xs sm:text-sm focus:outline-none focus:border-am-magenta focus:ring-2 focus:ring-am-magenta/20 transition-all text-zinc-900"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-700 mb-1">
-                      Interesse Principal
-                    </label>
-                    <select
-                      value={formData.tipoInteresse}
-                      onChange={(e) => setFormData({ ...formData, tipoInteresse: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-am-gray-300 text-xs sm:text-sm focus:outline-none focus:border-am-magenta focus:ring-2 focus:ring-am-magenta/20 transition-all text-zinc-900 bg-white"
-                    >
-                      <option value="atacado">Comprar no Atacado (Revenda)</option>
-                      <option value="varejo">Comprar no Varejo (Uso próprio)</option>
-                      <option value="duvidas">Dúvidas sobre tecidos ou entrega</option>
-                      <option value="pedidos">Acompanhamento de pedido</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-700 mb-1">
-                      Mensagem ou Dúvida (opcional)
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={formData.mensagem}
-                      onChange={(e) => setFormData({ ...formData, mensagem: e.target.value })}
-                      placeholder="Diga-nos o que você precisa..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-am-gray-300 text-xs sm:text-sm focus:outline-none focus:border-am-magenta focus:ring-2 focus:ring-am-magenta/20 transition-all text-zinc-900 resize-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-am-black hover:bg-am-magenta text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
-                  >
-                    <Send size={15} />
-                    <span>Enviar Mensagem</span>
-                  </button>
-                </form>
-              )}
-
+          {/* Faixa inferior de confiança */}
+          <div className="mt-8 pt-6 border-t border-zinc-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <span>Fabricação Nacional 100% Própria</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <span>Compra Direta Sem Intermediários</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <span>Envio Rastreado no WhatsApp</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <span>Qualidade Premium Comprovada</span>
             </div>
           </div>
 

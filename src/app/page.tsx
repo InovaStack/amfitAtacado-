@@ -5,12 +5,6 @@ import { Navbar } from "@/components/Navbar";
 import { HeroBanner } from "@/components/HeroBanner";
 import { CategoriesSection } from "@/components/CategoriesSection";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { NewArrivals } from "@/components/NewArrivals";
-import { BestSellers } from "@/components/BestSellers";
-import { PromoSection } from "@/components/PromoSection";
-import { WholesaleCTA } from "@/components/WholesaleCTA";
-import { RetailCTA } from "@/components/RetailCTA";
-import { InstagramFeed } from "@/components/InstagramFeed";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { PRODUCTS } from "@/data/products";
@@ -36,7 +30,7 @@ export default function Home() {
       {/* 1. Header / Navbar */}
       <Navbar onSearch={(query) => setSearchFilter(query)} />
 
-      {/* 2. Banner principal com campanhas e coleções */}
+      {/* 2. Banner principal */}
       <HeroBanner />
 
       {/* 3. Categorias */}
@@ -45,7 +39,7 @@ export default function Home() {
         onSelectCategory={(catId) => setSelectedCategory(catId)}
       />
 
-      {/* 4. Destaques da loja */}
+      {/* 4. Vitrine Principal / Busca */}
       <FeaturedProducts
         products={displayedProducts}
         selectedCategory={selectedCategory}
@@ -54,28 +48,10 @@ export default function Home() {
         onClearSearch={() => setSearchFilter("")}
       />
 
-      {/* 5. Novidades */}
-      <NewArrivals products={displayedProducts} />
-
-      {/* 6. Mais vendidos */}
-      <BestSellers products={displayedProducts} />
-
-      {/* 7. Produtos em promoção */}
-      <PromoSection products={displayedProducts} />
-
-      {/* 8. Chamada para compra no atacado */}
-      <WholesaleCTA />
-
-      {/* 9. Chamada para compra no varejo */}
-      <RetailCTA />
-
-      {/* 10. Instagram / redes sociais */}
-      <InstagramFeed />
-
-      {/* 11. Informações de contato */}
+      {/* 5. FAQ e Atendimento */}
       <ContactSection />
 
-      {/* 12. Rodapé completo */}
+      {/* 7. Rodapé */}
       <Footer />
     </main>
   );

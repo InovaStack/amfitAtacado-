@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Heart, Eye, ShoppingCart, Star, Check, PackageCheck, Layers, Lock } from "lucide-react";
-import { Product } from "@/data/products";
+import { Product, getProductSlug } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
 
 interface ProductCardProps {
   product: Product;
@@ -13,7 +13,6 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { mode, addToCart, setQuickViewProduct, favorites, toggleFavorite } = useCart();
-  const { requireWholesaleApproval, isWholesaleApproved, openAuthModal } = useAuth();
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "");
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
   const [isHovered, setIsHovered] = useState(false);
@@ -94,9 +93,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Image */}
-      <div 
-        onClick={handleOpenQuickView}
-        className="relative w-full aspect-[4/5] bg-zinc-100 overflow-hidden cursor-pointer"
+      <Link 
+        href={`/produto/${getProductSlug(product)}`}
+        className="relative w-full aspect-[4/5] bg-zinc-100 overflow-hidden cursor-pointer block"
       >
         <Image
           src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
@@ -118,9 +117,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Quick View Overlay bar */}
         <div className="absolute inset-x-0 bottom-0 py-2.5 bg-am-black/85 backdrop-blur-xs text-white text-xs font-semibold text-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
-          Clique para Ver Variações e Detalhes
+          Ver Detalhes do Produto
         </div>
-      </div>
+      </Link>
 
       {/* Product Details */}
       <div className="p-4 flex-1 flex flex-col justify-between">
@@ -143,11 +142,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Product Name */}
-          <h3 
-            onClick={handleOpenQuickView}
-            className="font-bold text-zinc-900 text-sm sm:text-base leading-snug line-clamp-2 hover:text-am-magenta transition-colors cursor-pointer mb-2"
-          >
-            {product.name}
+          <h3 className="font-bold text-zinc-900 text-sm sm:text-base leading-snug line-clamp-2 hover:text-am-magenta transition-colors mb-2">
+            <Link href={`/produto/${getProductSlug(product)}`}>
+              {product.name}
+            </Link>
           </h3>
 
           {/* Color swatches */}
@@ -201,54 +199,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="pt-3 border-t border-am-gray-100">
           <div className="flex items-baseline justify-between mb-3">
             <div>
-              {mode === "atacado" && requireWholesaleApproval && !isWholesaleApproved ? (
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1 text-am-magenta font-extrabold text-xs uppercase tracking-wider">
-                    <Lock size={12} />
-                    <span>Exclusivo Revenda</span>
-                  </div>
-                  <span className="text-[11px] text-zinc-500">Preço sob login/aprovação</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xs font-semibold text-zinc-500">R$</span>
+                <span className="text-xl sm:text-2xl font-black text-zinc-900">
+                  {currentPrice.toFixed(2).replace(".", ",")}
+                </span>
+                {product.originalPrice && mode === "varejo" && (
+                  <span className="text-xs text-zinc-400 line-through">
+                    R$ {product.originalPrice.toFixed(2).replace(".", ",")}
+                  </span>
+                )}
+              </div>
+
+              {/* Complementary price highlight */}
+              {mode === "atacado" ? (
+                <div className="text-[11px] text-am-magenta font-bold flex items-center gap-1">
+                  <span>Preço Atacado</span>
+                  <span className="text-zinc-400 font-normal">• Mín: {product.minWholesaleQty} pçs</span>
                 </div>
               ) : (
-                <>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-xs font-semibold text-zinc-500">R$</span>
-                    <span className="text-xl sm:text-2xl font-black text-zinc-900">
-                      {currentPrice.toFixed(2).replace(".", ",")}
-                    </span>
-                    {product.originalPrice && mode === "varejo" && (
-                      <span className="text-xs text-zinc-400 line-through">
-                        R$ {product.originalPrice.toFixed(2).replace(".", ",")}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Complementary price highlight */}
-                  {mode === "atacado" ? (
-                    <div className="text-[11px] text-am-magenta font-bold flex items-center gap-1">
-                      <span>Preço Atacado</span>
-                      <span className="text-zinc-400 font-normal">• Mín: {product.minWholesaleQty} pçs</span>
-                    </div>
-                  ) : (
-                    <p className="text-[11px] text-zinc-500">
-                      No atacado:{" "}
-                      {requireWholesaleApproval && !isWholesaleApproved ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openAuthModal("atacado", "login");
-                          }}
-                          className="text-am-magenta font-bold hover:underline"
-                        >
-                          Ver com CNPJ
-                        </button>
-                      ) : (
-                        <strong className="text-am-magenta font-bold">R$ {alternatePrice.toFixed(2).replace(".", ",")}</strong>
-                      )}
-                    </p>
-                  )}
-                </>
+                <p className="text-[11px] text-zinc-500">
+                  No atacado: <strong className="text-am-magenta font-bold">R$ {alternatePrice.toFixed(2).replace(".", ",")}</strong>
+                </p>
               )}
             </div>
 
@@ -261,41 +233,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </button>
           </div>
 
-          {mode === "atacado" && requireWholesaleApproval && !isWholesaleApproved ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                openAuthModal("atacado", "login");
-              }}
-              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all bg-am-magenta hover:bg-am-magenta-hover text-white shadow-magenta-sm"
-            >
-              <Lock size={14} />
-              <span>Liberar Preço Atacado</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleAdd}
-              className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
-                justAdded
-                  ? "bg-emerald-600 text-white"
-                  : "bg-am-black hover:bg-am-magenta text-white shadow-sm hover:shadow-magenta-sm"
-              }`}
-            >
-              {justAdded ? (
-                <>
-                  <Check size={16} />
-                  Adicionado!
-                </>
-              ) : (
-                <>
-                  <ShoppingCart size={15} />
-                  Comprar {mode === "atacado" ? "Atacado" : "Agora"}
-                </>
-              )}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleAdd}
+            className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+              justAdded
+                ? "bg-emerald-600 text-white"
+                : "bg-am-black hover:bg-am-magenta text-white shadow-sm hover:shadow-magenta-sm"
+            }`}
+          >
+            {justAdded ? (
+              <>
+                <Check size={16} />
+                Adicionado!
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={15} />
+                Comprar
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

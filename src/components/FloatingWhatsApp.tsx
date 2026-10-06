@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { getWhatsAppLink } from "@/config/store";
 
 export const FloatingWhatsApp: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(true);
@@ -27,7 +28,7 @@ export const FloatingWhatsApp: React.FC = () => {
 
       {/* Floating Button */}
       <a
-        href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20as%20pe%C3%A7as%20da%20AM%20FIT."
+        href={getWhatsAppLink("Olá! Gostaria de tirar dúvidas sobre as peças da AM FIT.")}
         target="_blank"
         rel="noopener noreferrer"
         className="w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 group relative"

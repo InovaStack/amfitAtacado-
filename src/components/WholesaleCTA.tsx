@@ -14,6 +14,7 @@ import {
   Calculator
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWhatsAppLink } from "@/config/store";
 
 export const WholesaleCTA: React.FC = () => {
   const { setMode } = useCart();
@@ -106,7 +107,7 @@ export const WholesaleCTA: React.FC = () => {
               </button>
 
               <a
-                href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20quero%20receber%20a%20tabela%20de%20atacado%20da%20AM%20FIT"
+                href={getWhatsAppLink("Olá, quero receber a tabela de atacado da AM FIT")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-4 bg-am-black hover:bg-zinc-800 text-white rounded-full font-bold text-sm tracking-wider transition-all flex items-center gap-2"

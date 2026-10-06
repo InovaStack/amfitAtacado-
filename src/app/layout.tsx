@@ -4,8 +4,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
-import { AuthModal } from "@/components/AuthModal";
 import { AdminProvider } from "@/context/AdminContext";
 
 export const metadata: Metadata = {
@@ -41,8 +39,6 @@ export default function RootLayout({
               {children}
               <CartDrawer />
               <QuickViewModal />
-              <FloatingWhatsApp />
-              <AuthModal />
             </CartProvider>
           </AuthProvider>
         </AdminProvider>

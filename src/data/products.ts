@@ -581,3 +581,35 @@ export const CAMPAIGNS = [
     image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=85",
   },
 ];
+
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-");
+}
+
+export function getProductSlug(product: Product): string {
+  return `${slugify(product.name)}-${product.id}`;
+}
+
+export function getProductBySlug(slug: string): Product | undefined {
+  if (!slug) return undefined;
+  const decoded = decodeURIComponent(slug).toLowerCase();
+  return PRODUCTS.find((p) => {
+    const fullSlug = getProductSlug(p).toLowerCase();
+    const nameSlug = slugify(p.name);
+    return (
+      p.id.toLowerCase() === decoded ||
+      fullSlug === decoded ||
+      nameSlug === decoded ||
+      decoded.endsWith(p.id.toLowerCase())
+    );
+  });
+}
+

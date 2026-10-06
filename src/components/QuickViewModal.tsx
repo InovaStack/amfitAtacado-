@@ -18,10 +18,8 @@ import {
   Lock 
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
 
 export const QuickViewModal: React.FC = () => {
-  const { requireWholesaleApproval, isWholesaleApproved, openAuthModal } = useAuth();
   const {
     quickViewProduct,
     setQuickViewProduct,
@@ -208,49 +206,25 @@ export const QuickViewModal: React.FC = () => {
                     <span className="text-[10px] text-zinc-400">Sem pedido mínimo</span>
                   </div>
 
-                  {requireWholesaleApproval && !isWholesaleApproved ? (
-                    <div className="bg-pink-50 p-2.5 rounded-xl border border-am-magenta/30 flex flex-col justify-between">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-black text-am-magenta uppercase flex items-center gap-1">
-                          <Lock size={12} /> Preço Atacado
-                        </span>
-                        <span className="text-[10px] font-bold bg-am-magenta text-white px-1.5 py-0.2 rounded">
-                          Exclusivo
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-zinc-600 mt-1">Preço sob login / aprovação</p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setQuickViewProduct(null);
-                          openAuthModal("atacado", "login");
-                        }}
-                        className="mt-1 text-[11px] font-bold text-am-magenta hover:underline text-left"
-                      >
-                        Liberar Preço Lojista →
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="bg-am-magenta-light p-2 rounded-xl border border-am-magenta-border">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-black text-am-magenta uppercase flex items-center gap-1">
-                          <Building2 size={12} /> Preço Atacado
-                        </span>
-                        <span className="text-[10px] font-bold bg-am-magenta text-white px-1.5 py-0.2 rounded">
-                          Fábrica
-                        </span>
-                      </div>
-                      <div className="flex items-baseline gap-1 mt-0.5">
-                        <span className="text-xs font-semibold text-am-magenta">R$</span>
-                        <span className="text-xl font-black text-am-magenta">
-                          {quickViewProduct.wholesalePrice.toFixed(2).replace(".", ",")}
-                        </span>
-                      </div>
-                      <span className="text-[10px] text-zinc-600 font-medium">
-                        Mínimo: {quickViewProduct.minWholesaleQty} pçs (Lucro: R$ {(quickViewProduct.retailPrice - quickViewProduct.wholesalePrice).toFixed(2).replace(".", ",")})
+                  <div className="bg-am-magenta-light p-2.5 rounded-xl border border-am-magenta-border">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black text-am-magenta uppercase flex items-center gap-1">
+                        <Building2 size={12} /> Preço Atacado
+                      </span>
+                      <span className="text-[10px] font-bold bg-am-magenta text-white px-1.5 py-0.2 rounded">
+                        Fábrica
                       </span>
                     </div>
-                  )}
+                    <div className="flex items-baseline gap-1 mt-0.5">
+                      <span className="text-xs font-semibold text-am-magenta">R$</span>
+                      <span className="text-xl font-black text-am-magenta">
+                        {quickViewProduct.wholesalePrice.toFixed(2).replace(".", ",")}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-zinc-600 font-medium">
+                      Mínimo: {quickViewProduct.minWholesaleQty} pçs (Lucro: R$ {(quickViewProduct.retailPrice - quickViewProduct.wholesalePrice).toFixed(2).replace(".", ",")})
+                    </span>
+                  </div>
                 </div>
 
                 <p className="text-[11px] text-zinc-500 mt-2 flex items-center gap-1.5">

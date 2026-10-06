@@ -7,7 +7,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PRODUCTS, Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
 import {
   Layers,
   Sparkles,
@@ -56,7 +55,6 @@ const WHOLESALE_COLLECTIONS = [
 
 export default function GradeAtacadoPage() {
   const { mode, setMode, addMultipleToCart, setIsCartOpen } = useCart();
-  const { user, isWholesaleApproved, openAuthModal } = useAuth();
 
   const [activeCollectionId, setActiveCollectionId] = useState("verao-2026");
   const [selectedColorPerProduct, setSelectedColorPerProduct] = useState<Record<string, string>>({});

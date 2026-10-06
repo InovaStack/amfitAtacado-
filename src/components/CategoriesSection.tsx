@@ -15,11 +15,11 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   onSelectCategory,
 }) => {
   return (
-    <section id="categorias" className="py-16 bg-white border-b border-am-gray-200">
+    <section id="categorias" className="py-10 sm:py-12 bg-white border-b border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 text-am-magenta font-extrabold text-xs tracking-widest uppercase mb-1">
               <span className="w-6 h-0.5 bg-am-magenta"></span>

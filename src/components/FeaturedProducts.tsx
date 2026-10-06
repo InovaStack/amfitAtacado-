@@ -29,11 +29,11 @@ export const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
     : products.filter((p) => p.isFeatured);
 
   return (
-    <section id="destaques" className="py-16 bg-am-gray-50/50">
+    <section id="destaques" className="py-10 sm:py-14 bg-am-gray-50/50">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 text-am-magenta font-extrabold text-xs tracking-widest uppercase mb-1">
               <Sparkles size={14} />
@@ -79,6 +79,18 @@ export const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* Botão Ver Catálogo Completo */}
+        {filteredProducts.length > 0 && !isSearching && !selectedCategory && (
+          <div className="mt-8 sm:mt-10 text-center">
+            <a
+              href="/catalogo"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-am-black text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl hover:bg-am-magenta transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              Ver Catálogo Completo
+            </a>
+          </div>
+        )}
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-zinc-300">
