@@ -61,6 +61,8 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
+  const [mainImgError, setMainImgError] = useState(false);
+  const fallbackImg = "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80";
 
   const isFavorite = favorites.includes(product.id);
 
@@ -179,12 +181,13 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
             {/* Imagem Principal */}
             <div className="relative flex-1 aspect-[4/5] bg-zinc-100 rounded-3xl overflow-hidden border border-am-gray-200 shadow-sm group">
               <Image
-                src={product.images[activeImageIndex] || product.images[0]}
+                src={!mainImgError ? (product.images?.[activeImageIndex] || product.images?.[0] || fallbackImg) : fallbackImg}
                 alt={product.name}
                 fill
                 priority
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 1024px) 100vw, 60vw"
+                onError={() => setMainImgError(true)}
               />
 
               {/* Badges superiores na imagem */}

@@ -44,27 +44,37 @@ function CatalogContent() {
 
   // Filter products based on search, category, department, size
   const filteredProducts = useMemo(() => {
+    const normalizeText = (text: string) =>
+      (text || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
     return products.filter((product: any) => {
-      // 1. Search filter (name, sku, description, fabric)
+      // 1. Search filter (name, sku, description, fabric, tags, colors)
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase().trim();
-        const matchesName = (product.name || "").toLowerCase().includes(q);
-        const matchesSku = (product.sku || "").toLowerCase().includes(q);
-        const matchesDesc = (product.description || "").toLowerCase().includes(q);
-        const matchesFabric = (product.fabric || "").toLowerCase().includes(q);
-        if (!matchesName && !matchesSku && !matchesDesc && !matchesFabric) return false;
+        const q = normalizeText(searchQuery);
+        const matchesName = normalizeText(product.name).includes(q);
+        const matchesSku = normalizeText(product.sku).includes(q);
+        const matchesDesc = normalizeText(product.description).includes(q);
+        const matchesFabric = normalizeText(product.fabric).includes(q);
+        const matchesTags = Array.isArray(product.tags) && product.tags.some((t: string) => normalizeText(t).includes(q));
+        const matchesColors = Array.isArray(product.colors) && product.colors.some((c: any) => normalizeText(typeof c === "string" ? c : c.name).includes(q));
+        if (!matchesName && !matchesSku && !matchesDesc && !matchesFabric && !matchesTags && !matchesColors) return false;
       }
 
       // 2. Category filter
       if (selectedCategory !== "todos") {
-        const catArray = Array.isArray(product.categories) ? product.categories : [];
-        const singleCat = (product.category || "").toLowerCase();
-        if (!catArray.includes(selectedCategory) && singleCat !== selectedCategory) return false;
+        const targetCat = normalizeText(selectedCategory);
+        const catArray = Array.isArray(product.categories) ? product.categories.map((c: string) => normalizeText(c)) : [];
+        const singleCat = normalizeText(product.category);
+        if (!catArray.includes(targetCat) && singleCat !== targetCat) return false;
       }
 
       // 3. Department filter
       if (selectedDepartment !== "todos") {
-        if ((product.department || "").toLowerCase() !== selectedDepartment.toLowerCase()) return false;
+        if (normalizeText(product.department) !== normalizeText(selectedDepartment)) return false;
       }
 
       // 4. Size filter

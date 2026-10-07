@@ -338,7 +338,7 @@ export const CartDrawer: React.FC = () => {
                         {/* Foto ampliada */}
                         <div className="relative w-20 h-24 sm:w-22 sm:h-28 bg-zinc-100 rounded-2xl overflow-hidden shrink-0 border border-am-gray-200">
                           <Image
-                            src={item.product.images[0]}
+                            src={item.product.images?.[0] || "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80"}
                             alt={item.product.name}
                             fill
                             className="object-cover"

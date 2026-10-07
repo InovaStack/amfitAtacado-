@@ -44,6 +44,8 @@ export const QuickViewModal: React.FC = () => {
   const [added, setAdded] = useState(false);
   const [copiedSku, setCopiedSku] = useState(false);
   const [activeTab, setActiveTab] = useState<"compra" | "variacoes">("compra");
+  const fallbackImg = "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80";
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     if (quickViewProduct) {
@@ -53,6 +55,7 @@ export const QuickViewModal: React.FC = () => {
       setQuantity(1);
       setAdded(false);
       setActiveTab("compra");
+      setImgError(false);
     }
   }, [quickViewProduct?.id]);
 
@@ -117,11 +120,12 @@ export const QuickViewModal: React.FC = () => {
           <div className="p-6 bg-am-gray-50 flex flex-col justify-between border-b md:border-b-0 md:border-r border-am-gray-200">
             <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-zinc-200 shadow-sm">
               <Image
-                src={quickViewProduct.images[selectedImg] || quickViewProduct.images[0]}
+                src={!imgError ? (quickViewProduct.images?.[selectedImg] || quickViewProduct.images?.[0] || fallbackImg) : fallbackImg}
                 alt={quickViewProduct.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover object-center"
+                onError={() => setImgError(true)}
               />
               
               <button

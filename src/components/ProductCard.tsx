@@ -20,6 +20,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(firstSize);
   const [isHovered, setIsHovered] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const fallbackImg = "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80";
+  const [imgError, setImgError] = useState(false);
 
   const isFavorite = favorites.includes(product.id);
 
@@ -103,8 +105,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className="relative w-full aspect-[4/5] bg-zinc-100 overflow-hidden cursor-pointer block"
       >
         {(() => {
-          const mainImg = (product.images && product.images[0]) ? product.images[0] : "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80";
-          const hoverImg = (isHovered && product.images && product.images[1]) ? product.images[1] : mainImg;
+          const mainImg = (!imgError && product.images && product.images[0]) ? product.images[0] : fallbackImg;
+          const hoverImg = (!imgError && isHovered && product.images && product.images[1]) ? product.images[1] : mainImg;
           
           return (
             <Image
@@ -113,6 +115,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              onError={() => setImgError(true)}
             />
           );
         })()}
