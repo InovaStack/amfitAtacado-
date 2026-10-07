@@ -14,7 +14,10 @@ import {
   Truck, 
   ChevronRight,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  ShoppingBag,
+  Package,
+  MessageCircle
 } from "lucide-react";
 import { getWhatsAppLink } from "@/config/store";
 import { useAdmin } from "@/context/AdminContext";
@@ -53,20 +56,20 @@ export const Footer: React.FC = () => {
                   href={storeConfig.social.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
+                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800 shadow-xs"
                   aria-label="Instagram AM FIT"
                   title={`Instagram ${storeConfig.social.instagram}`}
                 >
                   <Instagram size={15} />
                 </a>
               ) : (
-                <span
-                  className="w-8 h-8 rounded-lg bg-zinc-900/60 text-zinc-600 flex items-center justify-center border border-zinc-800/40 opacity-40 cursor-not-allowed pointer-events-none select-none"
+                <div
+                  className="w-8 h-8 rounded-lg bg-zinc-950 text-zinc-600 flex items-center justify-center border border-dashed border-zinc-800/60 opacity-30 grayscale select-none pointer-events-none cursor-not-allowed"
                   aria-label="Instagram pausado"
                   title="Instagram pausado no momento"
                 >
                   <Instagram size={15} />
-                </span>
+                </div>
               )}
 
               {storeConfig.channelsStatus?.whatsappActive !== false ? (
@@ -74,24 +77,24 @@ export const Footer: React.FC = () => {
                   href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-emerald-600 text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
+                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-emerald-600 text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800 shadow-xs"
                   aria-label="WhatsApp AM FIT"
                   title="WhatsApp Oficial"
                 >
                   <Phone size={15} />
                 </a>
               ) : (
-                <span
-                  className="w-8 h-8 rounded-lg bg-zinc-900/60 text-zinc-600 flex items-center justify-center border border-zinc-800/40 opacity-40 cursor-not-allowed pointer-events-none select-none"
+                <div
+                  className="w-8 h-8 rounded-lg bg-zinc-950 text-zinc-600 flex items-center justify-center border border-dashed border-zinc-800/60 opacity-30 grayscale select-none pointer-events-none cursor-not-allowed"
                   aria-label="WhatsApp pausado"
                   title="WhatsApp pausado no momento"
                 >
                   <Phone size={15} />
-                </span>
+                </div>
               )}
               <a
                 href={`mailto:${storeConfig.contact.email}`}
-                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
+                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800 shadow-xs"
                 aria-label="E-mail AM FIT"
                 title="E-mail Comercial"
               >
@@ -144,77 +147,128 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-black text-white uppercase tracking-wider text-am-magenta">
               Canais Oficiais
             </h4>
-            <ul className="space-y-2 text-xs text-zinc-400 font-medium">
+            <ul className="space-y-1.5 text-xs text-zinc-400 font-medium">
+              {/* WhatsApp */}
               <li>
                 {storeConfig.channelsStatus?.whatsappActive !== false ? (
                   <a 
                     href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                    className="group flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-zinc-900 transition-colors text-zinc-300 hover:text-emerald-400 border border-transparent hover:border-zinc-800"
                   >
-                    <ExternalLink size={12} className="text-emerald-500" />
-                    <span>WhatsApp de Vendas</span>
+                    <div className="flex items-center gap-2">
+                      <MessageCircle size={13} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                      <span>WhatsApp de Vendas</span>
+                    </div>
+                    <ExternalLink size={11} className="text-zinc-600 group-hover:text-emerald-400 transition-colors" />
                   </a>
                 ) : (
-                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
-                    <ExternalLink size={12} />
-                    <span>WhatsApp (Pausado)</span>
-                  </span>
+                  <div 
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-zinc-900/40 border border-zinc-800/40 opacity-30 grayscale blur-[0.2px] select-none pointer-events-none cursor-not-allowed"
+                    title="Canal WhatsApp pausado"
+                  >
+                    <div className="flex items-center gap-2 text-zinc-500 line-through">
+                      <MessageCircle size={13} className="text-zinc-600" />
+                      <span>WhatsApp (Pausado)</span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-zinc-800 text-zinc-500 px-1.5 py-0.2 rounded border border-zinc-700/50">
+                      Pausado
+                    </span>
+                  </div>
                 )}
               </li>
+
+              {/* Instagram */}
               <li>
                 {storeConfig.channelsStatus?.instagramActive !== false ? (
                   <a 
                     href={storeConfig.social.instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-pink-400 transition-colors flex items-center gap-1.5"
+                    className="group flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-zinc-900 transition-colors text-zinc-300 hover:text-pink-400 border border-transparent hover:border-zinc-800"
                   >
-                    <ExternalLink size={12} className="text-pink-500" />
-                    <span>Instagram {storeConfig.social.instagram}</span>
+                    <div className="flex items-center gap-2">
+                      <Instagram size={13} className="text-pink-500 group-hover:scale-110 transition-transform" />
+                      <span>Instagram Oficial</span>
+                    </div>
+                    <ExternalLink size={11} className="text-zinc-600 group-hover:text-pink-400 transition-colors" />
                   </a>
                 ) : (
-                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
-                    <ExternalLink size={12} />
-                    <span>Instagram (Pausado)</span>
-                  </span>
+                  <div 
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-zinc-900/40 border border-zinc-800/40 opacity-30 grayscale blur-[0.2px] select-none pointer-events-none cursor-not-allowed"
+                    title="Canal Instagram pausado"
+                  >
+                    <div className="flex items-center gap-2 text-zinc-500 line-through">
+                      <Instagram size={13} className="text-zinc-600" />
+                      <span>Instagram (Pausado)</span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-zinc-800 text-zinc-500 px-1.5 py-0.2 rounded border border-zinc-700/50">
+                      Pausado
+                    </span>
+                  </div>
                 )}
               </li>
+
+              {/* Shopee */}
               <li>
                 {storeConfig.channelsStatus?.shopeeActive !== false ? (
                   <a 
                     href={storeConfig.social.shopeeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-orange-400 transition-colors flex items-center gap-1.5"
+                    className="group flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-zinc-900 transition-colors text-zinc-300 hover:text-orange-400 border border-transparent hover:border-zinc-800"
                   >
-                    <ExternalLink size={12} className="text-orange-500" />
-                    <span>Loja na Shopee</span>
+                    <div className="flex items-center gap-2">
+                      <ShoppingBag size={13} className="text-orange-500 group-hover:scale-110 transition-transform" />
+                      <span>Loja na Shopee</span>
+                    </div>
+                    <ExternalLink size={11} className="text-zinc-600 group-hover:text-orange-400 transition-colors" />
                   </a>
                 ) : (
-                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
-                    <ExternalLink size={12} />
-                    <span>Shopee (Pausada)</span>
-                  </span>
+                  <div 
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-zinc-900/40 border border-zinc-800/40 opacity-30 grayscale blur-[0.2px] select-none pointer-events-none cursor-not-allowed"
+                    title="Canal Shopee pausado"
+                  >
+                    <div className="flex items-center gap-2 text-zinc-500 line-through">
+                      <ShoppingBag size={13} className="text-zinc-600" />
+                      <span>Shopee (Pausada)</span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-zinc-800 text-zinc-500 px-1.5 py-0.2 rounded border border-zinc-700/50">
+                      Pausada
+                    </span>
+                  </div>
                 )}
               </li>
+
+              {/* Mercado Livre */}
               <li>
                 {storeConfig.channelsStatus?.mercadoLivreActive !== false ? (
                   <a 
                     href={storeConfig.social.mercadoLivreUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-yellow-400 transition-colors flex items-center gap-1.5"
+                    className="group flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-zinc-900 transition-colors text-zinc-300 hover:text-yellow-400 border border-transparent hover:border-zinc-800"
                   >
-                    <ExternalLink size={12} className="text-yellow-400" />
-                    <span>Mercado Livre Oficial</span>
+                    <div className="flex items-center gap-2">
+                      <Package size={13} className="text-[#ffe600] group-hover:scale-110 transition-transform" />
+                      <span>Mercado Livre Oficial</span>
+                    </div>
+                    <ExternalLink size={11} className="text-zinc-600 group-hover:text-yellow-400 transition-colors" />
                   </a>
                 ) : (
-                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
-                    <ExternalLink size={12} />
-                    <span>Mercado Livre (Pausado)</span>
-                  </span>
+                  <div 
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-zinc-900/40 border border-zinc-800/40 opacity-30 grayscale blur-[0.2px] select-none pointer-events-none cursor-not-allowed"
+                    title="Canal Mercado Livre pausado"
+                  >
+                    <div className="flex items-center gap-2 text-zinc-500 line-through">
+                      <Package size={13} className="text-zinc-600" />
+                      <span>Mercado Livre (Pausado)</span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-zinc-800 text-zinc-500 px-1.5 py-0.2 rounded border border-zinc-700/50">
+                      Pausado
+                    </span>
+                  </div>
                 )}
               </li>
             </ul>
