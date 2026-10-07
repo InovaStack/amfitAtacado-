@@ -3,9 +3,15 @@
 import React, { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { getWhatsAppLink } from "@/config/store";
+import { useAdmin } from "@/context/AdminContext";
 
 export const FloatingWhatsApp: React.FC = () => {
+  const { storeConfig } = useAdmin();
   const [showTooltip, setShowTooltip] = useState(true);
+
+  if (storeConfig.channelsStatus?.whatsappActive === false) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">

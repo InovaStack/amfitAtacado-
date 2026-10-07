@@ -479,19 +479,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
         } catch {}
       }
-      if (e.key === "am_fit_store_config" && e.newValue) {
+      if (e.key === "am_fit_store_config" || !e.key) {
         try {
-          const parsed = JSON.parse(e.newValue);
-          setStoreConfig((prev) => ({
-            ...prev,
-            ...parsed,
-            contact: { ...prev.contact, ...parsed.contact },
-            social: { ...prev.social, ...parsed.social },
-            address: { ...prev.address, ...parsed.address },
-            commercial: { ...prev.commercial, ...parsed.commercial },
-            channelsStatus: { ...prev.channelsStatus, ...parsed.channelsStatus },
-            policies: { ...prev.policies, ...parsed.policies },
-          }));
+          const raw = e.newValue || localStorage.getItem("am_fit_store_config");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            setStoreConfig((prev) => ({
+              ...prev,
+              ...parsed,
+              contact: { ...prev.contact, ...parsed.contact },
+              social: { ...prev.social, ...parsed.social },
+              address: { ...prev.address, ...parsed.address },
+              commercial: { ...prev.commercial, ...parsed.commercial },
+              channelsStatus: { ...prev.channelsStatus, ...parsed.channelsStatus },
+              policies: { ...prev.policies, ...parsed.policies },
+            }));
+          }
         } catch {}
       }
     };
@@ -545,6 +548,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
       try {
         localStorage.setItem("am_fit_store_config", JSON.stringify(merged));
+        window.dispatchEvent(new Event("storage"));
       } catch {}
       return merged;
     });

@@ -73,17 +73,19 @@ export const SettingsTab: React.FC = () => {
   };
 
   const toggleChannelActive = (channelKey: keyof StoreConfig["channelsStatus"]) => {
-    setFormData((prev) => {
-      const current = prev.channelsStatus?.[channelKey] ?? true;
-      return {
-        ...prev,
-        channelsStatus: {
-          ...prev.channelsStatus,
-          [channelKey]: !current,
-        },
-      };
-    });
-    setSavedSuccess(false);
+    const current = formData.channelsStatus?.[channelKey] ?? true;
+    const updatedChannels = {
+      ...formData.channelsStatus,
+      [channelKey]: !current,
+    };
+    const updatedConfig: StoreConfig = {
+      ...formData,
+      channelsStatus: updatedChannels,
+    };
+    setFormData(updatedConfig);
+    updateStoreConfig(updatedConfig);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3000);
   };
 
   const handleSubmit = (e?: React.FormEvent) => {

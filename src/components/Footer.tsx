@@ -48,26 +48,47 @@ export const Footer: React.FC = () => {
 
             {/* Redes Sociais Compactas */}
             <div className="flex items-center gap-2 pt-1">
-              <a
-                href={storeConfig.social.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
-                aria-label="Instagram AM FIT"
-                title={`Instagram ${storeConfig.social.instagram}`}
-              >
-                <Instagram size={15} />
-              </a>
-              <a
-                href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-emerald-600 text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
-                aria-label="WhatsApp AM FIT"
-                title="WhatsApp Oficial"
-              >
-                <Phone size={15} />
-              </a>
+              {storeConfig.channelsStatus?.instagramActive !== false ? (
+                <a
+                  href={storeConfig.social.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
+                  aria-label="Instagram AM FIT"
+                  title={`Instagram ${storeConfig.social.instagram}`}
+                >
+                  <Instagram size={15} />
+                </a>
+              ) : (
+                <span
+                  className="w-8 h-8 rounded-lg bg-zinc-900/60 text-zinc-600 flex items-center justify-center border border-zinc-800/40 opacity-40 cursor-not-allowed pointer-events-none select-none"
+                  aria-label="Instagram pausado"
+                  title="Instagram pausado no momento"
+                >
+                  <Instagram size={15} />
+                </span>
+              )}
+
+              {storeConfig.channelsStatus?.whatsappActive !== false ? (
+                <a
+                  href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-emerald-600 text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
+                  aria-label="WhatsApp AM FIT"
+                  title="WhatsApp Oficial"
+                >
+                  <Phone size={15} />
+                </a>
+              ) : (
+                <span
+                  className="w-8 h-8 rounded-lg bg-zinc-900/60 text-zinc-600 flex items-center justify-center border border-zinc-800/40 opacity-40 cursor-not-allowed pointer-events-none select-none"
+                  aria-label="WhatsApp pausado"
+                  title="WhatsApp pausado no momento"
+                >
+                  <Phone size={15} />
+                </span>
+              )}
               <a
                 href={`mailto:${storeConfig.contact.email}`}
                 className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"

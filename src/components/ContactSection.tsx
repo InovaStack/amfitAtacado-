@@ -47,9 +47,18 @@ export const ContactSection: React.FC = () => {
           {(() => {
             const isActive = storeConfig.channelsStatus?.whatsappActive ?? true;
             return (
-              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
-                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              <div className={`rounded-2xl p-5 sm:p-6 transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive 
+                  ? "bg-zinc-100/90 border-2 border-dashed border-zinc-300 opacity-50 grayscale select-none pointer-events-none cursor-not-allowed" 
+                  : "bg-white border border-zinc-200 shadow-xs hover:shadow-md"
               }`}>
+                {!isActive && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-zinc-600 bg-zinc-200/90 px-2 py-0.5 rounded-md border border-zinc-300">
+                      Pausado
+                    </span>
+                  </div>
+                )}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -62,8 +71,8 @@ export const ContactSection: React.FC = () => {
                         Online
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
-                        Pausado
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-zinc-500 bg-zinc-200 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Indisponível
                       </span>
                     )}
                   </div>
@@ -88,7 +97,7 @@ export const ContactSection: React.FC = () => {
                     <ExternalLink size={14} />
                   </a>
                 ) : (
-                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center pointer-events-none cursor-not-allowed select-none border border-zinc-300">
                     Indisponível no Momento
                   </div>
                 )}
@@ -100,9 +109,18 @@ export const ContactSection: React.FC = () => {
           {(() => {
             const isActive = storeConfig.channelsStatus?.instagramActive ?? true;
             return (
-              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
-                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              <div className={`rounded-2xl p-5 sm:p-6 transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive 
+                  ? "bg-zinc-100/90 border-2 border-dashed border-zinc-300 opacity-50 grayscale select-none pointer-events-none cursor-not-allowed" 
+                  : "bg-white border border-zinc-200 shadow-xs hover:shadow-md"
               }`}>
+                {!isActive && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-zinc-600 bg-zinc-200/90 px-2 py-0.5 rounded-md border border-zinc-300">
+                      Pausado
+                    </span>
+                  </div>
+                )}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none" />
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -114,8 +132,8 @@ export const ContactSection: React.FC = () => {
                         Bastidores & Moda
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
-                        Pausado
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-200 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Indisponível
                       </span>
                     )}
                   </div>
@@ -140,7 +158,7 @@ export const ContactSection: React.FC = () => {
                     <ExternalLink size={14} />
                   </a>
                 ) : (
-                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center pointer-events-none cursor-not-allowed select-none border border-zinc-300">
                     Indisponível no Momento
                   </div>
                 )}
@@ -152,9 +170,18 @@ export const ContactSection: React.FC = () => {
           {(() => {
             const isActive = storeConfig.channelsStatus?.shopeeActive ?? true;
             return (
-              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
-                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              <div className={`rounded-2xl p-5 sm:p-6 transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive 
+                  ? "bg-zinc-100/90 border-2 border-dashed border-zinc-300 opacity-50 grayscale select-none pointer-events-none cursor-not-allowed" 
+                  : "bg-white border border-zinc-200 shadow-xs hover:shadow-md"
               }`}>
+                {!isActive && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-zinc-600 bg-zinc-200/90 px-2 py-0.5 rounded-md border border-zinc-300">
+                      Pausado
+                    </span>
+                  </div>
+                )}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -166,8 +193,8 @@ export const ContactSection: React.FC = () => {
                         Frete & Ofertas
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
-                        Pausado
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-200 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Indisponível
                       </span>
                     )}
                   </div>
@@ -192,7 +219,7 @@ export const ContactSection: React.FC = () => {
                     <ExternalLink size={14} />
                   </a>
                 ) : (
-                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center pointer-events-none cursor-not-allowed select-none border border-zinc-300">
                     Indisponível no Momento
                   </div>
                 )}
@@ -204,9 +231,18 @@ export const ContactSection: React.FC = () => {
           {(() => {
             const isActive = storeConfig.channelsStatus?.mercadoLivreActive ?? true;
             return (
-              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
-                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              <div className={`rounded-2xl p-5 sm:p-6 transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive 
+                  ? "bg-zinc-100/90 border-2 border-dashed border-zinc-300 opacity-50 grayscale select-none pointer-events-none cursor-not-allowed" 
+                  : "bg-white border border-zinc-200 shadow-xs hover:shadow-md"
               }`}>
+                {!isActive && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-zinc-600 bg-zinc-200/90 px-2 py-0.5 rounded-md border border-zinc-300">
+                      Pausado
+                    </span>
+                  </div>
+                )}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -218,8 +254,8 @@ export const ContactSection: React.FC = () => {
                         Entrega Full
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
-                        Pausado
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-200 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Indisponível
                       </span>
                     )}
                   </div>
@@ -244,7 +280,7 @@ export const ContactSection: React.FC = () => {
                     <ExternalLink size={14} />
                   </a>
                 ) : (
-                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center pointer-events-none cursor-not-allowed select-none border border-zinc-300">
                     Indisponível no Momento
                   </div>
                 )}
