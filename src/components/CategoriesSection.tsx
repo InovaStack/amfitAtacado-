@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
+import { useAdmin } from "@/context/AdminContext";
 
 interface CategoriesSectionProps {
   selectedCategory: string | null;
@@ -14,6 +15,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   selectedCategory,
   onSelectCategory,
 }) => {
+  const { products } = useAdmin();
   return (
     <section id="categorias" className="py-10 sm:py-12 bg-white border-b border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
@@ -48,6 +50,13 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
+            const liveCount = (products && products.length > 0)
+              ? products.filter((p: any) => {
+                  const arr = Array.isArray(p.categories) ? p.categories : [];
+                  const c = (p.category || "").toLowerCase();
+                  return arr.includes(cat.id) || c === cat.id;
+                }).length
+              : cat.itemCount;
 
             return (
               <div
@@ -76,7 +85,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
                   
                   {/* Floating count badge */}
                   <span className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm text-am-black text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
-                    {cat.itemCount} peças
+                    {liveCount} {liveCount === 1 ? "peça" : "peças"}
                   </span>
                 </div>
 

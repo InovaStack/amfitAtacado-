@@ -17,9 +17,11 @@ import {
   CheckCircle2,
   Sparkles
 } from "lucide-react";
-import { STORE_CONFIG, getWhatsAppLink } from "@/config/store";
+import { getWhatsAppLink } from "@/config/store";
+import { useAdmin } from "@/context/AdminContext";
 
 export const ContactSection: React.FC = () => {
+  const { storeConfig } = useAdmin();
   return (
     <section id="contato" className="py-12 sm:py-16 bg-zinc-50/70 border-t border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
@@ -42,129 +44,213 @@ export const ContactSection: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10 sm:mb-12">
           
           {/* Card WhatsApp */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                  <MessageCircle size={24} />
+          {(() => {
+            const isActive = storeConfig.channelsStatus?.whatsappActive ?? true;
+            return (
+              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              }`}>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                      <MessageCircle size={24} />
+                    </div>
+                    {isActive ? (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        Online
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Pausado
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-black text-base text-zinc-900 mb-1">WhatsApp Oficial</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                    {isActive 
+                      ? "Atendimento direto com vendedoras para pedidos de atacado, varejo e dúvidas rápidas."
+                      : "Canal temporariamente indisponível para atendimento."}
+                  </p>
+                  <div className="text-xs font-bold text-zinc-800 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-200 mb-4 font-mono">
+                    {storeConfig.contact.whatsappFormatted}
+                  </div>
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Online
-                </span>
+                {isActive ? (
+                  <a
+                    href={getWhatsAppLink("Olá! Gostaria de falar com o atendimento da AM FIT.", storeConfig.contact.whatsappNumber)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+                  >
+                    <span>Chamar no WhatsApp</span>
+                    <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                    Indisponível no Momento
+                  </div>
+                )}
               </div>
-              <h3 className="font-black text-base text-zinc-900 mb-1">WhatsApp Oficial</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                Atendimento direto com vendedoras para pedidos de atacado, varejo e dúvidas rápidas.
-              </p>
-              <div className="text-xs font-bold text-zinc-800 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-200 mb-4 font-mono">
-                {STORE_CONFIG.contact.whatsappFormatted}
-              </div>
-            </div>
-            <a
-              href={getWhatsAppLink("Olá! Gostaria de falar com o atendimento da AM FIT.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
-            >
-              <span>Chamar no WhatsApp</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+            );
+          })()}
 
           {/* Card Instagram */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform">
-                  <Instagram size={24} />
+          {(() => {
+            const isActive = storeConfig.channelsStatus?.instagramActive ?? true;
+            return (
+              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              }`}>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform">
+                      <Instagram size={24} />
+                    </div>
+                    {isActive ? (
+                      <span className="inline-flex items-center text-[11px] font-bold text-pink-700 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
+                        Bastidores & Moda
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Pausado
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-black text-base text-zinc-900 mb-1">Instagram Oficial</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                    {isActive 
+                      ? "Acompanhe provadores, lançamentos semanais, vídeos das peças e dicas de revenda."
+                      : "Canal temporariamente indisponível."}
+                  </p>
+                  <div className="text-xs font-bold text-pink-700 bg-pink-50/60 px-3 py-2 rounded-lg border border-pink-200 mb-4 font-mono">
+                    {storeConfig.social.instagram}
+                  </div>
                 </div>
-                <span className="inline-flex items-center text-[11px] font-bold text-pink-700 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
-                  Bastidores & Moda
-                </span>
+                {isActive ? (
+                  <a
+                    href={storeConfig.social.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+                  >
+                    <span>Acessar Instagram</span>
+                    <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                    Indisponível no Momento
+                  </div>
+                )}
               </div>
-              <h3 className="font-black text-base text-zinc-900 mb-1">Instagram Oficial</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                Acompanhe provadores, lançamentos semanais, vídeos das peças e dicas de revenda.
-              </p>
-              <div className="text-xs font-bold text-pink-700 bg-pink-50/60 px-3 py-2 rounded-lg border border-pink-200 mb-4 font-mono">
-                {STORE_CONFIG.social.instagram}
-              </div>
-            </div>
-            <a
-              href={STORE_CONFIG.social.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
-            >
-              <span>Acessar Instagram</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+            );
+          })()}
 
           {/* Card Shopee */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#ee4d2d] text-white flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
-                  <ShoppingBag size={24} />
+          {(() => {
+            const isActive = storeConfig.channelsStatus?.shopeeActive ?? true;
+            return (
+              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              }`}>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-[#ee4d2d] text-white flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                      <ShoppingBag size={24} />
+                    </div>
+                    {isActive ? (
+                      <span className="inline-flex items-center text-[11px] font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+                        Frete & Cupons
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Pausado
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-black text-base text-zinc-900 mb-1">Shopee Oficial</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                    {isActive
+                      ? "Compre no varejo com cupons de frete grátis da plataforma e milhares de avaliações 5 estrelas."
+                      : "Canal temporariamente indisponível."}
+                  </p>
+                  <div className="text-xs font-bold text-orange-700 bg-orange-50/60 px-3 py-2 rounded-lg border border-orange-200 mb-4">
+                    {isActive ? "Loja Oficial Verificada" : "Vendas Pausadas"}
+                  </div>
                 </div>
-                <span className="inline-flex items-center text-[11px] font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                  Frete & Cupons
-                </span>
+                {isActive ? (
+                  <a
+                    href={storeConfig.social.shopeeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 bg-[#ee4d2d] hover:bg-[#d73f20] text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+                  >
+                    <span>Ver Loja na Shopee</span>
+                    <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                    Indisponível no Momento
+                  </div>
+                )}
               </div>
-              <h3 className="font-black text-base text-zinc-900 mb-1">Shopee Oficial</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                Compre no varejo com cupons de frete grátis da plataforma e milhares de avaliações 5 estrelas.
-              </p>
-              <div className="text-xs font-bold text-orange-700 bg-orange-50/60 px-3 py-2 rounded-lg border border-orange-200 mb-4">
-                Loja Oficial Verificada
-              </div>
-            </div>
-            <a
-              href={STORE_CONFIG.social.shopeeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-[#ee4d2d] hover:bg-[#d73f20] text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
-            >
-              <span>Ver Loja na Shopee</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+            );
+          })()}
 
           {/* Card Mercado Livre */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#ffe600] text-zinc-900 flex items-center justify-center shadow-md shadow-yellow-500/20 group-hover:scale-105 transition-transform">
-                  <Package size={24} />
+          {(() => {
+            const isActive = storeConfig.channelsStatus?.mercadoLivreActive ?? true;
+            return (
+              <div className={`bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group relative overflow-hidden ${
+                !isActive ? "opacity-45 grayscale blur-[0.5px] select-none" : ""
+              }`}>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-[#ffe600] text-zinc-900 flex items-center justify-center shadow-md shadow-yellow-500/20 group-hover:scale-105 transition-transform">
+                      <Package size={24} />
+                    </div>
+                    {isActive ? (
+                      <span className="inline-flex items-center text-[11px] font-bold text-amber-800 bg-yellow-50 px-2.5 py-0.5 rounded-full border border-yellow-200">
+                        Entrega Full
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
+                        Pausado
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-black text-base text-zinc-900 mb-1">Mercado Livre</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed mb-4">
+                    {isActive
+                      ? "Envio imediato, garantia total de entrega e compra garantida com Mercado Pago."
+                      : "Canal temporariamente indisponível."}
+                  </p>
+                  <div className="text-xs font-bold text-zinc-800 bg-yellow-50/60 px-3 py-2 rounded-lg border border-yellow-200 mb-4">
+                    {isActive ? "Mercado Líder Oficial" : "Vendas Pausadas"}
+                  </div>
                 </div>
-                <span className="inline-flex items-center text-[11px] font-bold text-amber-800 bg-yellow-50 px-2.5 py-0.5 rounded-full border border-yellow-200">
-                  Entrega Full
-                </span>
+                {isActive ? (
+                  <a
+                    href={storeConfig.social.mercadoLivreUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 bg-zinc-900 hover:bg-black text-[#ffe600] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
+                  >
+                    <span>Ver Loja no Mercado Livre</span>
+                    <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <div className="w-full py-3 px-4 bg-zinc-200 text-zinc-500 rounded-xl font-bold text-xs uppercase tracking-wider text-center cursor-not-allowed">
+                    Indisponível no Momento
+                  </div>
+                )}
               </div>
-              <h3 className="font-black text-base text-zinc-900 mb-1">Mercado Livre</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                Envio imediato, garantia total de entrega e compra garantida com Mercado Pago.
-              </p>
-              <div className="text-xs font-bold text-zinc-800 bg-yellow-50/60 px-3 py-2 rounded-lg border border-yellow-200 mb-4">
-                Mercado Líder Oficial
-              </div>
-            </div>
-            <a
-              href={STORE_CONFIG.social.mercadoLivreUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-zinc-900 hover:bg-black text-[#ffe600] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
-            >
-              <span>Ver Mercado Livre</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+            );
+          })()}
 
         </div>
 
@@ -186,9 +272,7 @@ export const ContactSection: React.FC = () => {
               </div>
               <h4 className="font-black text-sm text-am-black">Horário de Atendimento</h4>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                <strong>Segunda a Sexta:</strong> 08:00 às 18:00<br />
-                <strong>Sábados:</strong> 09:00 às 13:00<br />
-                <span className="text-zinc-400">Exceto domingos e feriados</span>
+                {storeConfig.contact.hours}
               </p>
             </div>
 
@@ -199,8 +283,7 @@ export const ContactSection: React.FC = () => {
               </div>
               <h4 className="font-black text-sm text-am-black">Origem & Polo Têxtil</h4>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                Confecção própria sediada em São Paulo - SP.<br />
-                Despacho ágil para todos os estados do Brasil via Correios e transportadoras.
+                {storeConfig.policies.factoryOrigin}
               </p>
             </div>
 
@@ -212,12 +295,14 @@ export const ContactSection: React.FC = () => {
               <h4 className="font-black text-sm text-am-black">E-mail Comercial</h4>
               <p className="text-xs text-zinc-600 leading-relaxed">
                 <a 
-                  href={`mailto:${STORE_CONFIG.contact.email}`} 
+                  href={`mailto:${storeConfig.contact.email}`} 
                   className="font-bold text-am-magenta hover:underline"
                 >
-                  {STORE_CONFIG.contact.email}
+                  {storeConfig.contact.email}
                 </a><br />
-                Para envio de notas fiscais, pedidos corporativos e parcerias com lojistas.
+                {storeConfig.contact.salesEmail && (
+                  <span className="text-zinc-500">Vendas: {storeConfig.contact.salesEmail}</span>
+                )}
               </p>
             </div>
 
@@ -228,8 +313,7 @@ export const ContactSection: React.FC = () => {
               </div>
               <h4 className="font-black text-sm text-am-black">Garantia & 1ª Troca</h4>
               <p className="text-xs text-zinc-600 leading-relaxed">
-                Garantia total de Zero Transparência em poliamida de alta gramatura.<br />
-                1ª Troca facilitada em até 7 dias corridos após o recebimento.
+                {storeConfig.policies.warrantyAndExchange}
               </p>
             </div>
 

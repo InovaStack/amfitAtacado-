@@ -28,6 +28,7 @@ import { Product, getProductSlug } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { STORE_CONFIG, getWhatsAppLink } from "@/config/store";
 import { ProductCard } from "@/components/ProductCard";
+import { useAdmin } from "@/context/AdminContext";
 
 interface ProductDetailClientProps {
   product: Product;
@@ -35,10 +36,21 @@ interface ProductDetailClientProps {
 }
 
 export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
-  product,
-  relatedProducts,
+  product: initialProduct,
+  relatedProducts: initialRelatedProducts,
 }) => {
   const { mode, setMode, addToCart, favorites, toggleFavorite } = useCart();
+  const { products, storeConfig } = useAdmin();
+
+  // Find updated product from AdminContext if it exists (for live updates of price, photos, name, etc.)
+  const liveProduct = products.find((p: any) => p.id === initialProduct.id);
+  const product: Product = (liveProduct as any) || initialProduct;
+
+  const relatedProducts = (products && products.length > 0)
+    ? products
+        .filter((p: any) => p.id !== product.id && (p.category === product.category || p.department === product.department))
+        .slice(0, 4)
+    : initialRelatedProducts;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "");
@@ -53,19 +65,21 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   const isFavorite = favorites.includes(product.id);
 
   // Selected variation stock
-  const currentVariation = product.variations.find(
-    (v) => v.color === selectedColor && v.size === selectedSize
+  const currentVariation = (product.variations || []).find(
+    (v: any) => v.color === selectedColor && v.size === selectedSize
   );
   const variationStock = currentVariation ? currentVariation.stock : product.stock;
 
-  const currentPrice = mode === "atacado" ? product.wholesalePrice : product.retailPrice;
-  const alternatePrice = mode === "atacado" ? product.retailPrice : product.wholesalePrice;
+  const currentPrice = mode === "atacado" ? (product.wholesalePrice ?? (product as any).priceWholesale ?? 0) : (product.retailPrice ?? (product as any).priceRetail ?? 0);
+  const alternatePrice = mode === "atacado" ? (product.retailPrice ?? (product as any).priceRetail ?? 0) : (product.wholesalePrice ?? (product as any).priceWholesale ?? 0);
 
   // Wholesale margin calculations
-  const profitMarginPercent = Math.round(
-    ((product.retailPrice - product.wholesalePrice) / product.wholesalePrice) * 100
-  );
-  const profitPerPiece = (product.retailPrice - product.wholesalePrice).toFixed(2).replace(".", ",");
+  const retailPriceNum = Number(product.retailPrice ?? (product as any).priceRetail ?? 0);
+  const wholesalePriceNum = Number(product.wholesalePrice ?? (product as any).priceWholesale ?? 0);
+  const profitMarginPercent = wholesalePriceNum > 0
+    ? Math.round(((retailPriceNum - wholesalePriceNum) / wholesalePriceNum) * 100)
+    : 0;
+  const profitPerPiece = (retailPriceNum - wholesalePriceNum).toFixed(2).replace(".", ",");
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, selectedColor, quantity);
@@ -74,10 +88,14 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
   };
 
   const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      }
+    } catch {
+      // fallback
     }
   };
 
@@ -319,7 +337,7 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
                     </div>
 
                     <div className="text-[11px] text-zinc-500 bg-white p-2.5 rounded-xl border border-am-gray-200">
-                      📦 <strong>Regra do Atacado:</strong> Pedido mínimo a partir de {STORE_CONFIG.commercial.minWholesalePieces} peças sortidas na loja ou R$ {STORE_CONFIG.commercial.minWholesaleOrderAmount},00 no total.
+                      📦 <strong>Regra do Atacado:</strong> Pedido mínimo a partir de {storeConfig.commercial.minWholesalePieces} peças sortidas na loja ou R$ {storeConfig.commercial.minWholesaleOrderAmount},00 no total.
                     </div>
                   </div>
                 ) : (
@@ -334,11 +352,11 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
                         R$ {product.retailPrice.toFixed(2).replace(".", ",")}
                       </span>
                       <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                        5% OFF no PIX (R$ {(product.retailPrice * 0.95).toFixed(2).replace(".", ",")})
+                        {storeConfig.commercial.pixDiscountPercentage}% OFF no PIX (R$ {(product.retailPrice * (1 - storeConfig.commercial.pixDiscountPercentage / 100)).toFixed(2).replace(".", ",")})
                       </span>
                     </div>
                     <p className="text-xs text-zinc-500">
-                      ou até <strong>6x de R$ {(product.retailPrice / 6).toFixed(2).replace(".", ",")}</strong> sem juros no cartão
+                      ou até <strong>{storeConfig.commercial.maxInstallments}x de R$ {(product.retailPrice / storeConfig.commercial.maxInstallments).toFixed(2).replace(".", ",")}</strong> sem juros no cartão
                     </p>
                   </div>
                 )}

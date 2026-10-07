@@ -7,21 +7,22 @@ import { CategoriesSection } from "@/components/CategoriesSection";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
-import { PRODUCTS } from "@/data/products";
+import { useAdmin } from "@/context/AdminContext";
 
 export default function Home() {
+  const { products } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState<string>("");
 
   // Filter products by search if query exists
-  const displayedProducts = PRODUCTS.filter((p) => {
+  const displayedProducts = products.filter((p: any) => {
     if (!searchFilter) return true;
     const q = searchFilter.toLowerCase();
     return (
-      p.name.toLowerCase().includes(q) ||
-      p.categoryLabel.toLowerCase().includes(q) ||
-      p.fabric.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q)
+      (p.name || "").toLowerCase().includes(q) ||
+      (p.categoryLabel || "").toLowerCase().includes(q) ||
+      (p.fabric || "").toLowerCase().includes(q) ||
+      (p.description || "").toLowerCase().includes(q)
     );
   });
 

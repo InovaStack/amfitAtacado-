@@ -10,6 +10,7 @@ import { OrdersTab } from "@/components/admin/OrdersTab";
 import { ClientsTab } from "@/components/admin/ClientsTab";
 import { BannersTab } from "@/components/admin/BannersTab";
 import { CouponsTab } from "@/components/admin/CouponsTab";
+import { SettingsTab } from "@/components/admin/SettingsTab";
 
 export default function AdminPage() {
   const { isAdminAuthenticated } = useAdmin();
@@ -27,12 +28,12 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col md:flex-row font-sans selection:bg-am-magenta selection:text-white">
       {/* Sidebar de Navegação */}
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Área Central de Conteúdo */}
-      <main className="flex-1 overflow-y-auto max-h-screen p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 overflow-y-auto max-h-screen p-4 sm:p-6 lg:p-8 bg-zinc-50">
         {activeTab === "dashboard" && (
           <DashboardTab
             setActiveTab={setActiveTab}
@@ -51,6 +52,8 @@ export default function AdminPage() {
         {activeTab === "banners" && <BannersTab />}
 
         {activeTab === "cupons" && <CouponsTab />}
+
+        {activeTab === "configuracoes" && <SettingsTab />}
       </main>
     </div>
   );

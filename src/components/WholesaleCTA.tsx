@@ -14,14 +14,16 @@ import {
   Calculator
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { getWhatsAppLink } from "@/config/store";
 
 export const WholesaleCTA: React.FC = () => {
   const { setMode } = useCart();
+  const { openAuthModal, isAuthenticated, user } = useAuth();
   const [investment, setInvestment] = useState(600);
 
-  // Profit calculation: average markup is ~115%
-  const estimatedReturn = Math.round(investment * 2.15);
+  // Profit calculation: markup oficial de 100% de lucro
+  const estimatedReturn = Math.round(investment * 2.0);
   const estimatedProfit = estimatedReturn - investment;
 
   return (
@@ -37,56 +39,66 @@ export const WholesaleCTA: React.FC = () => {
           {/* Left Column: Benefits & Pitch */}
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-am-magenta-light border border-am-magenta-border text-am-magenta font-extrabold text-xs tracking-wider uppercase">
-              <Building2 size={15} />
-              Seja Revendedora AM FIT
+              <Sparkles size={15} />
+              Lucre 100% com nossos produtos
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-black text-am-black tracking-tight leading-tight uppercase">
-              COMPRE NO ATACADO DIRETO DA <span className="text-am-magenta underline decoration-am-magenta/40">FÁBRICA</span>
+              ATACADO | PREÇO DE <span className="text-am-magenta underline decoration-am-magenta/40">FÁBRICA</span>
             </h2>
 
             <p className="text-base text-zinc-600 leading-relaxed max-w-2xl">
-              Monte seu próprio negócio ou aumente o mix da sua loja com a marca fitness que mais cresce. 
-              Peças de alta durabilidade, modelagem que valoriza o corpo e tecidos tecnológicos com margem de lucro de <strong>até 120%</strong>.
+              Exclusivo para revendedores e lojistas. Seu negócio começa aqui com produtos de alto giro, 
+              qualidade impecável e margem para <strong>dobrar seu investimento com 100% de lucro</strong>.
             </p>
 
-            {/* Checklist of Wholesale Benefits */}
+            {/* Checklist com os 4 Pilares da Loja */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="text-am-magenta flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                <span className="text-xl">✨</span>
                 <div>
-                  <h4 className="font-bold text-sm text-am-black">Pedido Mínimo Baixo</h4>
-                  <p className="text-xs text-zinc-500">Apenas R$ 300,00 ou a partir de 6 peças variadas</p>
+                  <h4 className="font-bold text-sm text-am-black">Lucre 100% com Nossos Produtos</h4>
+                  <p className="text-xs text-zinc-500">Dobre seu capital de giro com preços imbatíveis</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="text-am-magenta flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                <span className="text-xl">📦</span>
                 <div>
-                  <h4 className="font-bold text-sm text-am-black">Grade Livre & Sem Restrições</h4>
-                  <p className="text-xs text-zinc-500">Escolha os modelos, cores e tamanhos que desejar</p>
+                  <h4 className="font-bold text-sm text-am-black">Atacado | Preço de Fábrica</h4>
+                  <p className="text-xs text-zinc-500">Direto de quem fabrica com pedido mínimo facilitado</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="text-am-magenta flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                <span className="text-xl">💼</span>
                 <div>
-                  <h4 className="font-bold text-sm text-am-black">Fotos & Material de Divulgação</h4>
-                  <p className="text-xs text-zinc-500">Fotos profissionais liberadas para seus stories e catálogo</p>
+                  <h4 className="font-bold text-sm text-am-black">Exclusivo para Revendedores</h4>
+                  <p className="text-xs text-zinc-500">Condições especiais para quem quer crescer</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="text-am-magenta flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                <span className="text-xl">🚀</span>
                 <div>
-                  <h4 className="font-bold text-sm text-am-black">Consultora Dedicada no WhatsApp</h4>
-                  <p className="text-xs text-zinc-500">Suporte humanizado para tirar dúvidas e fechar pedido</p>
+                  <h4 className="font-bold text-sm text-am-black">Seu Negócio Começa Aqui</h4>
+                  <p className="text-xs text-zinc-500">Apoio completo, fotos profissionais e suporte</p>
                 </div>
               </div>
             </div>
 
             {/* Action buttons */}
             <div className="pt-4 flex flex-wrap items-center gap-4">
+              {(!isAuthenticated || user?.accountType !== "atacado") && (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("atacado", "register")}
+                  className="px-7 py-4 bg-gradient-to-r from-am-magenta to-pink-600 hover:from-pink-600 hover:to-am-magenta text-white rounded-full font-black text-sm uppercase tracking-wider transition-all transform hover:scale-105 shadow-magenta flex items-center gap-2"
+                >
+                  <Building2 size={16} />
+                  <span>Cadastrar Conta Atacado</span>
+                </button>
+              )}
               <Link
                 href="/lista-atacado"
                 className="px-7 py-4 bg-am-magenta hover:bg-am-magenta-dark text-white rounded-full font-black text-sm uppercase tracking-wider transition-all transform hover:scale-105 shadow-magenta flex items-center gap-2"
@@ -132,7 +144,7 @@ export const WholesaleCTA: React.FC = () => {
                   </div>
                 </div>
                 <span className="text-xs font-bold bg-am-magenta/20 text-am-magenta px-2.5 py-1 rounded-full border border-am-magenta/30">
-                  +115% Margem
+                  ✨ 100% de Lucro
                 </span>
               </div>
 
@@ -172,7 +184,7 @@ export const WholesaleCTA: React.FC = () => {
                 </div>
 
                 <div className="bg-am-magenta/10 rounded-2xl p-4 border border-am-magenta/30">
-                  <span className="text-xs text-am-magenta font-semibold block mb-1">Seu Lucro Líquido:</span>
+                  <span className="text-xs text-am-magenta font-semibold block mb-1">Seu Lucro Líquido (100%):</span>
                   <span className="text-xl sm:text-2xl font-black text-am-magenta">
                     R$ {estimatedProfit.toLocaleString("pt-BR")},00
                   </span>

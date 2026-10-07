@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/data/products";
+import { getActiveStoreConfig, STORE_CONFIG } from "@/config/store";
 
 export interface CartItem {
   product: Product;
@@ -164,9 +165,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return acc + unitPrice * item.quantity;
   }, 0);
 
-  // Minimum wholesale target is R$ 300 or 6 items
-  const wholesaleMinTarget = 300;
-  const isWholesaleQualified = mode === "atacado" ? subtotal >= wholesaleMinTarget || totalItems >= 6 : true;
+  // Wholesale limits dynamically loaded from store config
+  const currentConfig = getActiveStoreConfig();
+  const wholesaleMinTarget = currentConfig.commercial?.minWholesaleOrderAmount || 300;
+  const wholesaleMinPieces = currentConfig.commercial?.minWholesalePieces || 6;
+  const isWholesaleQualified = mode === "atacado" ? (subtotal >= wholesaleMinTarget || totalItems >= wholesaleMinPieces) : true;
 
   return (
     <CartContext.Provider

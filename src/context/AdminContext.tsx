@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product, PRODUCTS as INITIAL_PRODUCTS, CAMPAIGNS as INITIAL_CAMPAIGNS } from "@/data/products";
+import { STORE_CONFIG, StoreConfig } from "@/config/store";
 
 export interface AdminProduct {
   id: string;
@@ -17,6 +18,7 @@ export interface AdminProduct {
   priceRetail: number;
   priceWholesale: number;
   minWholesaleQty: number;
+  originalPrice?: number;
   images: string[];
   sizes: string[];
   colors: any[];
@@ -24,6 +26,7 @@ export interface AdminProduct {
   variations?: any[];
   isNew?: boolean;
   isBestSeller?: boolean;
+  isFeatured?: boolean;
   rating: number;
   reviewsCount?: number;
   fabric?: string;
@@ -172,6 +175,10 @@ interface AdminContextType {
   deleteCoupon: (id: string) => void;
   toggleCouponStatus: (id: string) => void;
   toggleCouponActive: (id: string) => void;
+
+  // Configurações da Loja & Políticas
+  storeConfig: StoreConfig;
+  updateStoreConfig: (newConfig: Partial<StoreConfig>) => void;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -385,13 +392,13 @@ const INITIAL_ADMIN_BANNERS: AdminBanner[] = [
   {
     id: "ban-2",
     type: "principal",
-    tag: "ATACADO DIRETO DA FÁBRICA",
-    title: "LUCRO DE ATÉ 120% NA REVENDA",
-    subtitle: "Seja uma revendedora AM FIT. Pedido mínimo facilitado e envio imediato para todo o Brasil.",
+    tag: "ATACADO | PREÇO DE FÁBRICA",
+    title: "LUCRE 100% COM NOSSOS PRODUTOS",
+    subtitle: "Exclusivo para revendedores. Seu negócio começa aqui com pedido mínimo facilitado e envio para todo o Brasil.",
     image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?auto=format&fit=crop&w=1200&q=85",
     ctaText: "QUERO REVENDER",
     ctaLink: "/#atacado",
-    badge: "Preços Especiais de Atacado",
+    badge: "Exclusivo para Revendedores",
     isActive: true,
   },
   {
@@ -480,33 +487,100 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [clients, setClients] = useState<AdminClient[]>(INITIAL_ADMIN_CLIENTS);
   const [banners, setBanners] = useState<AdminBanner[]>(INITIAL_ADMIN_BANNERS);
   const [coupons, setCoupons] = useState<AdminCoupon[]>(INITIAL_ADMIN_COUPONS);
+  const [storeConfig, setStoreConfig] = useState<StoreConfig>(STORE_CONFIG);
 
-  // Carregar do localStorage
+  // Carregar do localStorage na montagem e escutar atualizações
   useEffect(() => {
-    try {
-      const savedAuth = localStorage.getItem("am_fit_admin_auth");
-      if (savedAuth) {
-        setIsAdminAuthenticated(true);
-        setAdminUser(JSON.parse(savedAuth));
+    const loadFromStorage = () => {
+      try {
+        const savedAuth = localStorage.getItem("am_fit_admin_auth");
+        if (savedAuth) {
+          setIsAdminAuthenticated(true);
+          setAdminUser(JSON.parse(savedAuth));
+        }
+
+        const savedProducts = localStorage.getItem("am_fit_admin_products");
+        if (savedProducts) {
+          try {
+            const parsed = JSON.parse(savedProducts);
+            if (Array.isArray(parsed) && parsed.length > 0) setProducts(parsed);
+          } catch {}
+        }
+
+        const savedOrders = localStorage.getItem("am_fit_admin_orders");
+        if (savedOrders) setOrders(JSON.parse(savedOrders));
+
+        const savedClients = localStorage.getItem("am_fit_admin_clients");
+        if (savedClients) setClients(JSON.parse(savedClients));
+
+        const savedBanners = localStorage.getItem("am_fit_admin_banners");
+        if (savedBanners) setBanners(JSON.parse(savedBanners));
+
+        const savedCoupons = localStorage.getItem("am_fit_admin_coupons");
+        if (savedCoupons) setCoupons(JSON.parse(savedCoupons));
+
+        const savedConfig = localStorage.getItem("am_fit_store_config");
+        if (savedConfig) {
+          try {
+            const parsedCfg = JSON.parse(savedConfig);
+            setStoreConfig((prev) => ({
+              ...prev,
+              ...parsedCfg,
+              contact: { ...prev.contact, ...parsedCfg.contact },
+              social: { ...prev.social, ...parsedCfg.social },
+              address: { ...prev.address, ...parsedCfg.address },
+              commercial: { ...prev.commercial, ...parsedCfg.commercial },
+              channelsStatus: { ...prev.channelsStatus, ...parsedCfg.channelsStatus },
+              policies: { ...prev.policies, ...parsedCfg.policies },
+            }));
+          } catch {}
+        }
+      } catch {
+        // ignore
       }
+    };
 
-      const savedProducts = localStorage.getItem("am_fit_admin_products");
-      if (savedProducts) setProducts(JSON.parse(savedProducts));
+    loadFromStorage();
 
-      const savedOrders = localStorage.getItem("am_fit_admin_orders");
-      if (savedOrders) setOrders(JSON.parse(savedOrders));
+    // Escutar eventos de storage entre diferentes abas ou recarregamento
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "am_fit_admin_products" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setProducts(parsed);
+        } catch {}
+      }
+      if (e.key === "am_fit_admin_banners" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setBanners(parsed);
+        } catch {}
+      }
+      if (e.key === "am_fit_admin_orders" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setOrders(parsed);
+        } catch {}
+      }
+      if (e.key === "am_fit_store_config" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          setStoreConfig((prev) => ({
+            ...prev,
+            ...parsed,
+            contact: { ...prev.contact, ...parsed.contact },
+            social: { ...prev.social, ...parsed.social },
+            address: { ...prev.address, ...parsed.address },
+            commercial: { ...prev.commercial, ...parsed.commercial },
+            channelsStatus: { ...prev.channelsStatus, ...parsed.channelsStatus },
+            policies: { ...prev.policies, ...parsed.policies },
+          }));
+        } catch {}
+      }
+    };
 
-      const savedClients = localStorage.getItem("am_fit_admin_clients");
-      if (savedClients) setClients(JSON.parse(savedClients));
-
-      const savedBanners = localStorage.getItem("am_fit_admin_banners");
-      if (savedBanners) setBanners(JSON.parse(savedBanners));
-
-      const savedCoupons = localStorage.getItem("am_fit_admin_coupons");
-      if (savedCoupons) setCoupons(JSON.parse(savedCoupons));
-    } catch {
-      // ignore
-    }
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Salvar no localStorage
@@ -540,6 +614,31 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch {}
   }, [coupons]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem("am_fit_store_config", JSON.stringify(storeConfig));
+    } catch {}
+  }, [storeConfig]);
+
+  const updateStoreConfig = (newConfig: Partial<StoreConfig>) => {
+    setStoreConfig((prev) => {
+      const merged: StoreConfig = {
+        ...prev,
+        ...newConfig,
+        contact: { ...prev.contact, ...newConfig.contact },
+        social: { ...prev.social, ...newConfig.social },
+        address: { ...prev.address, ...newConfig.address },
+        commercial: { ...prev.commercial, ...newConfig.commercial },
+        channelsStatus: { ...prev.channelsStatus, ...newConfig.channelsStatus },
+        policies: { ...prev.policies, ...newConfig.policies },
+      };
+      try {
+        localStorage.setItem("am_fit_store_config", JSON.stringify(merged));
+      } catch {}
+      return merged;
+    });
+  };
+
   // Auth Methods
   const adminLogin = async (email: string, password?: string): Promise<boolean> => {
     // Conta padrão do administrador
@@ -562,22 +661,139 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Produtos CRUD
-  const addProduct = (productData: Omit<Product, "id">) => {
-    const newProduct: Product = {
+  const addProduct = (productData: any) => {
+    const rawCategory = productData.category || "leggings";
+    const categorySlug = typeof rawCategory === "string" ? rawCategory.toLowerCase().replace(/\s+/g, "-") : "leggings";
+    const categoryLabel = productData.categoryLabel || (typeof rawCategory === "string" ? rawCategory : "Moda Fitness");
+    const department = productData.department || "Feminino";
+    const departmentSlug = typeof department === "string" ? department.toLowerCase() : "feminino";
+
+    const categoriesArray = Array.isArray(productData.categories) && productData.categories.length > 0
+      ? productData.categories
+      : [departmentSlug, "moda-fitness", categorySlug, "lancamentos"];
+
+    const sizes = Array.isArray(productData.sizes) && productData.sizes.length > 0 ? productData.sizes : ["P", "M", "G"];
+    const colors = Array.isArray(productData.colors) && productData.colors.length > 0 
+      ? productData.colors.map((c: any) => typeof c === "string" ? { name: c, hex: "#000000" } : c)
+      : [{ name: "Preto", hex: "#000000" }];
+
+    // Auto-generate variations if missing
+    const variations = Array.isArray(productData.variations) && productData.variations.length > 0
+      ? productData.variations
+      : colors.flatMap((col: any) =>
+          sizes.map((sz: string) => ({
+            id: `var-${Date.now()}-${col.name}-${sz}`,
+            sku: `${productData.sku || "REF"}-${sz}-${col.name.slice(0, 3).toUpperCase()}`,
+            color: col.name,
+            colorHex: col.hex || "#000000",
+            size: sz,
+            stock: Math.floor((Number(productData.stock) || 50) / (colors.length * sizes.length)) || 10,
+          }))
+        );
+
+    const retailPrice = Number(productData.retailPrice ?? productData.priceRetail ?? 0);
+    const wholesalePrice = Number(productData.wholesalePrice ?? productData.priceWholesale ?? 0);
+
+    const newProduct: any = {
       ...productData,
-      id: `prod-${Date.now()}`,
+      id: productData.id || `prod-${Date.now()}`,
+      sku: productData.sku || `REF-AM${Math.floor(1000 + Math.random() * 9000)}`,
+      name: productData.name,
+      department,
+      type: productData.type || categoryLabel,
+      category: categorySlug,
+      categoryLabel,
+      categories: categoriesArray,
+      retailPrice,
+      wholesalePrice,
+      priceRetail: retailPrice,
+      priceWholesale: wholesalePrice,
+      minWholesaleQty: Number(productData.minWholesaleQty) || 6,
+      originalPrice: productData.originalPrice ? Number(productData.originalPrice) : undefined,
+      images: Array.isArray(productData.images) && productData.images.length > 0 ? productData.images : ["https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80"],
+      sizes,
+      colors,
+      stock: Number(productData.stock) || 50,
+      variations,
+      fabric: productData.fabric || "88% Poliamida, 12% Elastano - Gramatura 320g",
+      description: productData.description || "",
+      rating: productData.rating || 5.0,
+      reviewsCount: productData.reviewsCount || 12,
+      isFeatured: Boolean(productData.isFeatured),
+      isBestSeller: Boolean(productData.isBestSeller),
+      isNew: productData.isNew !== undefined ? Boolean(productData.isNew) : true,
     };
-    setProducts((prev) => [newProduct, ...prev]);
+
+    setProducts((prev) => {
+      const updated = [newProduct, ...prev];
+      try {
+        localStorage.setItem("am_fit_admin_products", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
+      } catch {}
+      return updated;
+    });
   };
 
-  const updateProduct = (id: string, updatedFields: Partial<Product>) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...updatedFields } : p))
-    );
+  const updateProduct = (id: string, updatedFields: any) => {
+    setProducts((prev) => {
+      const updated = prev.map((p) => {
+        if (p.id !== id) return p;
+
+        const retailPrice = Number(updatedFields.retailPrice ?? updatedFields.priceRetail ?? (p as any).retailPrice ?? (p as any).priceRetail ?? 0);
+        const wholesalePrice = Number(updatedFields.wholesalePrice ?? updatedFields.priceWholesale ?? (p as any).wholesalePrice ?? (p as any).priceWholesale ?? 0);
+        
+        const rawCategory = updatedFields.category !== undefined ? updatedFields.category : p.category;
+        const categorySlug = typeof rawCategory === "string" ? rawCategory.toLowerCase().replace(/\s+/g, "-") : p.category;
+        const categoryLabel = updatedFields.categoryLabel || (typeof rawCategory === "string" ? rawCategory : p.categoryLabel);
+
+        const department = updatedFields.department !== undefined ? updatedFields.department : p.department;
+        const departmentSlug = typeof department === "string" ? department.toLowerCase() : "feminino";
+
+        const sizes = updatedFields.sizes || p.sizes;
+        const colors = updatedFields.colors || p.colors;
+
+        const categoriesArray = updatedFields.categories || [
+          departmentSlug,
+          "moda-fitness",
+          categorySlug,
+          ...(p.categories || []),
+        ].filter((val, idx, arr) => arr.indexOf(val) === idx);
+
+        return {
+          ...p,
+          ...updatedFields,
+          department,
+          category: categorySlug,
+          categoryLabel,
+          categories: categoriesArray,
+          retailPrice,
+          wholesalePrice,
+          priceRetail: retailPrice,
+          priceWholesale: wholesalePrice,
+          sizes,
+          colors,
+          images: updatedFields.images || p.images,
+        };
+      });
+
+      try {
+        localStorage.setItem("am_fit_admin_products", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
+      } catch {}
+
+      return updated;
+    });
   };
 
   const deleteProduct = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      try {
+        localStorage.setItem("am_fit_admin_products", JSON.stringify(updated));
+        window.dispatchEvent(new Event("storage"));
+      } catch {}
+      return updated;
+    });
   };
 
   // Pedidos CRUD
@@ -585,16 +801,80 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setOrders((prev) =>
       prev.map((ord) => (ord.id === orderId ? { ...ord, status } : ord))
     );
+
+    // Sincronizar com pedidos do usuário no AuthContext
+    try {
+      const activeUserRaw = localStorage.getItem("am_fit_user");
+      if (activeUserRaw) {
+        const activeUser = JSON.parse(activeUserRaw);
+        if (activeUser.orders) {
+          activeUser.orders = activeUser.orders.map((o: any) =>
+            o.id === orderId || o.orderNumber === orderId
+              ? { ...o, status: status.toLowerCase(), statusLabel: `Status atualizado: ${status}` }
+              : o
+          );
+          localStorage.setItem("am_fit_user", JSON.stringify(activeUser));
+        }
+      }
+
+      const usersDbRaw = localStorage.getItem("am_fit_users_db");
+      if (usersDbRaw) {
+        const usersDb = JSON.parse(usersDbRaw);
+        const updatedDb = usersDb.map((u: any) => {
+          if (u.orders) {
+            u.orders = u.orders.map((o: any) =>
+              o.id === orderId || o.orderNumber === orderId
+                ? { ...o, status: status.toLowerCase(), statusLabel: `Status: ${status}` }
+                : o
+            );
+          }
+          return u;
+        });
+        localStorage.setItem("am_fit_users_db", JSON.stringify(updatedDb));
+      }
+    } catch {}
   };
 
   const updateOrderTracking = (orderId: string, trackingCode: string, trackingCompany: string) => {
     setOrders((prev) =>
       prev.map((ord) =>
         ord.id === orderId
-          ? { ...ord, trackingCode, trackingCompany, status: "enviado" }
+          ? { ...ord, trackingCode, carrier: trackingCompany, trackingCompany, status: "Enviado" }
           : ord
       )
     );
+
+    // Sincronizar rastreio com a conta do cliente
+    try {
+      const activeUserRaw = localStorage.getItem("am_fit_user");
+      if (activeUserRaw) {
+        const activeUser = JSON.parse(activeUserRaw);
+        if (activeUser.orders) {
+          activeUser.orders = activeUser.orders.map((o: any) =>
+            o.id === orderId || o.orderNumber === orderId
+              ? { ...o, trackingCode, trackingCompany, status: "enviado", statusLabel: "Em trânsito com a transportadora" }
+              : o
+          );
+          localStorage.setItem("am_fit_user", JSON.stringify(activeUser));
+        }
+      }
+
+      const usersDbRaw = localStorage.getItem("am_fit_users_db");
+      if (usersDbRaw) {
+        const usersDb = JSON.parse(usersDbRaw);
+        const updatedDb = usersDb.map((u: any) => {
+          if (u.orders) {
+            u.orders = u.orders.map((o: any) =>
+              o.id === orderId || o.orderNumber === orderId
+                ? { ...o, trackingCode, trackingCompany, status: "enviado", statusLabel: "Em trânsito" }
+                : o
+            );
+          }
+          return u;
+        });
+        localStorage.setItem("am_fit_users_db", JSON.stringify(updatedDb));
+      }
+    } catch {}
   };
 
   const addOrder = (orderData: Omit<AdminOrder, "id">) => {
@@ -606,12 +886,48 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Clientes
-  const updateClientWholesaleStatus = (clientId: string, status: "approved" | "pending" | "rejected") => {
+  const updateClientWholesaleStatus = (clientId: string, status: "approved" | "pending" | "rejected" | "aprovado" | "pendente" | "rejeitado") => {
+    const normalized = (status === "aprovado" || status === "approved") ? "approved" : (status === "rejeitado" || status === "rejected") ? "rejected" : "pending";
+    
     setClients((prev) =>
       prev.map((cli) =>
-        cli.id === clientId ? { ...cli, wholesaleStatus: status } : cli
+        cli.id === clientId ? { ...cli, wholesaleStatus: normalized } : cli
       )
     );
+
+    // Sincronizar aprovação com banco de dados de usuários e conta ativa
+    try {
+      const targetClient = clients.find((c) => c.id === clientId);
+      const targetEmail = targetClient?.email?.toLowerCase();
+
+      const usersDbRaw = localStorage.getItem("am_fit_users_db");
+      if (usersDbRaw) {
+        const usersDb = JSON.parse(usersDbRaw);
+        const updatedDb = usersDb.map((u: any) => {
+          if (u.id === clientId || (targetEmail && u.email?.toLowerCase() === targetEmail)) {
+            return {
+              ...u,
+              wholesaleStatus: normalized,
+              wholesaleApprovedAt: normalized === "approved" ? new Date().toLocaleDateString("pt-BR") : u.wholesaleApprovedAt,
+            };
+          }
+          return u;
+        });
+        localStorage.setItem("am_fit_users_db", JSON.stringify(updatedDb));
+      }
+
+      const activeUserRaw = localStorage.getItem("am_fit_user");
+      if (activeUserRaw) {
+        const activeUser = JSON.parse(activeUserRaw);
+        if (activeUser.id === clientId || (targetEmail && activeUser.email?.toLowerCase() === targetEmail)) {
+          activeUser.wholesaleStatus = normalized;
+          if (normalized === "approved") {
+            activeUser.wholesaleApprovedAt = new Date().toLocaleDateString("pt-BR");
+          }
+          localStorage.setItem("am_fit_user", JSON.stringify(activeUser));
+        }
+      }
+    } catch {}
   };
 
   // Banners
@@ -698,6 +1014,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteCoupon,
         toggleCouponStatus,
         toggleCouponActive: (id: string) => toggleCouponStatus(id),
+        storeConfig,
+        updateStoreConfig,
       }}
     >
       {children}

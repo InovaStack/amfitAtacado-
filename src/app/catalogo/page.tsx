@@ -23,14 +23,16 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { PRODUCTS, CATALOG_CATEGORIES, Product } from "@/data/products";
+import { CATALOG_CATEGORIES, Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
 
 function CatalogContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("categoria") || "todos";
 
   const { mode, setMode, setQuickViewProduct } = useCart();
+  const { products } = useAdmin();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("todos");
@@ -42,43 +44,45 @@ function CatalogContent() {
 
   // Filter products based on search, category, department, size
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return products.filter((product: any) => {
       // 1. Search filter (name, sku, description, fabric)
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchesName = product.name.toLowerCase().includes(q);
-        const matchesSku = product.sku.toLowerCase().includes(q);
-        const matchesDesc = product.description.toLowerCase().includes(q);
-        const matchesFabric = product.fabric.toLowerCase().includes(q);
+        const matchesName = (product.name || "").toLowerCase().includes(q);
+        const matchesSku = (product.sku || "").toLowerCase().includes(q);
+        const matchesDesc = (product.description || "").toLowerCase().includes(q);
+        const matchesFabric = (product.fabric || "").toLowerCase().includes(q);
         if (!matchesName && !matchesSku && !matchesDesc && !matchesFabric) return false;
       }
 
       // 2. Category filter
       if (selectedCategory !== "todos") {
-        if (!product.categories.includes(selectedCategory)) return false;
+        const catArray = Array.isArray(product.categories) ? product.categories : [];
+        const singleCat = (product.category || "").toLowerCase();
+        if (!catArray.includes(selectedCategory) && singleCat !== selectedCategory) return false;
       }
 
       // 3. Department filter
       if (selectedDepartment !== "todos") {
-        if (product.department.toLowerCase() !== selectedDepartment.toLowerCase()) return false;
+        if ((product.department || "").toLowerCase() !== selectedDepartment.toLowerCase()) return false;
       }
 
       // 4. Size filter
       if (selectedSize) {
-        if (!product.sizes.includes(selectedSize)) return false;
+        if (!Array.isArray(product.sizes) || !product.sizes.includes(selectedSize)) return false;
       }
 
       return true;
-    }).sort((a, b) => {
-      const priceA = mode === "atacado" ? a.wholesalePrice : a.retailPrice;
-      const priceB = mode === "atacado" ? b.wholesalePrice : b.retailPrice;
+    }).sort((a: any, b: any) => {
+      const priceA = mode === "atacado" ? (a.wholesalePrice ?? a.priceWholesale ?? 0) : (a.retailPrice ?? a.priceRetail ?? 0);
+      const priceB = mode === "atacado" ? (b.wholesalePrice ?? b.priceWholesale ?? 0) : (b.retailPrice ?? b.priceRetail ?? 0);
 
       if (sortBy === "menor-preco") return priceA - priceB;
       if (sortBy === "maior-preco") return priceB - priceA;
-      if (sortBy === "nome") return a.name.localeCompare(b.name);
-      return b.rating - a.rating; // default: best rated / destaque
+      if (sortBy === "nome") return (a.name || "").localeCompare(b.name || "");
+      return (b.rating || 5) - (a.rating || 5); // default: best rated / destaque
     });
-  }, [selectedCategory, selectedDepartment, selectedSize, searchQuery, sortBy, mode]);
+  }, [products, selectedCategory, selectedDepartment, selectedSize, searchQuery, sortBy, mode]);
 
   const clearAllFilters = () => {
     setSelectedCategory("todos");
@@ -405,7 +409,7 @@ function CatalogContent() {
             {/* Products Count */}
             <div className="flex items-center justify-between text-xs text-zinc-500 px-1">
               <span>
-                Mostrando <strong>{filteredProducts.length}</strong> de <strong>{PRODUCTS.length}</strong> produtos
+                Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> produtos
               </span>
               <span className="font-semibold text-am-magenta">
                 {mode === "atacado" ? "Exibindo Preços de Atacado" : "Exibindo Preços de Varejo"}
@@ -475,12 +479,12 @@ function CatalogContent() {
                           <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
                             <div className="flex items-center gap-1">
                               <span className="text-[11px] text-zinc-400">Cores:</span>
-                              {product.colors.map((c) => (
+                              {(product.colors || []).map((c: any) => (
                                 <span
-                                  key={c.name}
+                                  key={typeof c === "string" ? c : c.name}
                                   className="w-3.5 h-3.5 rounded-full border border-zinc-300 inline-block"
-                                  style={{ backgroundColor: c.hex }}
-                                  title={c.name}
+                                  style={{ backgroundColor: typeof c === "string" ? "#000000" : (c.hex || "#000000") }}
+                                  title={typeof c === "string" ? c : c.name}
                                 />
                               ))}
                             </div>

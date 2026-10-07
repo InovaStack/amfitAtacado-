@@ -16,9 +16,11 @@ import {
   ExternalLink,
   Sparkles
 } from "lucide-react";
-import { STORE_CONFIG, getWhatsAppLink } from "@/config/store";
+import { getWhatsAppLink } from "@/config/store";
+import { useAdmin } from "@/context/AdminContext";
 
 export const Footer: React.FC = () => {
+  const { storeConfig } = useAdmin();
   return (
     <footer className="bg-zinc-950 text-white pt-8 sm:pt-10 pb-6 border-t border-zinc-800">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
@@ -47,17 +49,17 @@ export const Footer: React.FC = () => {
             {/* Redes Sociais Compactas */}
             <div className="flex items-center gap-2 pt-1">
               <a
-                href={STORE_CONFIG.social.instagramUrl}
+                href={storeConfig.social.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
                 aria-label="Instagram AM FIT"
-                title="Instagram @amfit.oficial"
+                title={`Instagram ${storeConfig.social.instagram}`}
               >
                 <Instagram size={15} />
               </a>
               <a
-                href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.")}
+                href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-emerald-600 text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
@@ -67,7 +69,7 @@ export const Footer: React.FC = () => {
                 <Phone size={15} />
               </a>
               <a
-                href={`mailto:${STORE_CONFIG.contact.email}`}
+                href={`mailto:${storeConfig.contact.email}`}
                 className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-am-magenta text-zinc-300 hover:text-white flex items-center justify-center transition-colors border border-zinc-800"
                 aria-label="E-mail AM FIT"
                 title="E-mail Comercial"
@@ -123,48 +125,76 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-xs text-zinc-400 font-medium">
               <li>
-                <a 
-                  href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
-                >
-                  <ExternalLink size={12} className="text-emerald-500" />
-                  <span>WhatsApp de Vendas</span>
-                </a>
+                {storeConfig.channelsStatus?.whatsappActive !== false ? (
+                  <a 
+                    href={getWhatsAppLink("Olá! Gostaria de falar com o time da AM FIT.", storeConfig.contact.whatsappNumber)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={12} className="text-emerald-500" />
+                    <span>WhatsApp de Vendas</span>
+                  </a>
+                ) : (
+                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
+                    <ExternalLink size={12} />
+                    <span>WhatsApp (Pausado)</span>
+                  </span>
+                )}
               </li>
               <li>
-                <a 
-                  href={STORE_CONFIG.social.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-pink-400 transition-colors flex items-center gap-1.5"
-                >
-                  <ExternalLink size={12} className="text-pink-500" />
-                  <span>Instagram @amfit.oficial</span>
-                </a>
+                {storeConfig.channelsStatus?.instagramActive !== false ? (
+                  <a 
+                    href={storeConfig.social.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-pink-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={12} className="text-pink-500" />
+                    <span>Instagram {storeConfig.social.instagram}</span>
+                  </a>
+                ) : (
+                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
+                    <ExternalLink size={12} />
+                    <span>Instagram (Pausado)</span>
+                  </span>
+                )}
               </li>
               <li>
-                <a 
-                  href={STORE_CONFIG.social.shopeeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-orange-400 transition-colors flex items-center gap-1.5"
-                >
-                  <ExternalLink size={12} className="text-orange-500" />
-                  <span>Loja na Shopee</span>
-                </a>
+                {storeConfig.channelsStatus?.shopeeActive !== false ? (
+                  <a 
+                    href={storeConfig.social.shopeeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-orange-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={12} className="text-orange-500" />
+                    <span>Loja na Shopee</span>
+                  </a>
+                ) : (
+                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
+                    <ExternalLink size={12} />
+                    <span>Shopee (Pausada)</span>
+                  </span>
+                )}
               </li>
               <li>
-                <a 
-                  href={STORE_CONFIG.social.mercadoLivreUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-yellow-400 transition-colors flex items-center gap-1.5"
-                >
-                  <ExternalLink size={12} className="text-yellow-400" />
-                  <span>Mercado Livre Oficial</span>
-                </a>
+                {storeConfig.channelsStatus?.mercadoLivreActive !== false ? (
+                  <a 
+                    href={storeConfig.social.mercadoLivreUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-yellow-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={12} className="text-yellow-400" />
+                    <span>Mercado Livre Oficial</span>
+                  </a>
+                ) : (
+                  <span className="opacity-40 grayscale flex items-center gap-1.5 cursor-not-allowed text-zinc-500 line-through">
+                    <ExternalLink size={12} />
+                    <span>Mercado Livre (Pausado)</span>
+                  </span>
+                )}
               </li>
             </ul>
           </div>
@@ -177,10 +207,10 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5">
               <div className="flex flex-wrap gap-1.5 text-[11px]">
                 <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded font-bold text-emerald-400">
-                  PIX (-5%)
+                  PIX (-{storeConfig.commercial.pixDiscountPercentage}%)
                 </span>
                 <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded font-bold text-zinc-300">
-                  Cartão até 6x
+                  Cartão até {storeConfig.commercial.maxInstallments}x
                 </span>
                 <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded font-bold text-zinc-300">
                   Boleto

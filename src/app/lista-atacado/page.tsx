@@ -7,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PRODUCTS, Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
 import {
   Layers,
   Sparkles,
@@ -38,7 +39,7 @@ const WHOLESALE_COLLECTIONS = [
   {
     id: "alto-giro-basicos",
     name: "Linha Básica de Alto Giro",
-    tagline: "Camisetas, tops e leggings pretas e chumbo com margens superiores a 120%.",
+    tagline: "Camisetas, tops e leggings pretas e chumbo com margens de 100% de lucro na revenda.",
     bannerImage: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?auto=format&fit=crop&w=1600&q=80",
     badge: "Mais Vendidos",
     categoryFilter: "camisetas",
@@ -55,6 +56,7 @@ const WHOLESALE_COLLECTIONS = [
 
 export default function GradeAtacadoPage() {
   const { mode, setMode, addMultipleToCart, setIsCartOpen } = useCart();
+  const { products } = useAdmin();
 
   const [activeCollectionId, setActiveCollectionId] = useState("verao-2026");
   const [selectedColorPerProduct, setSelectedColorPerProduct] = useState<Record<string, string>>({});
@@ -71,14 +73,15 @@ export default function GradeAtacadoPage() {
 
   // Filter products for this collection
   const collectionProducts = useMemo(() => {
+    const list = products && products.length > 0 ? products : PRODUCTS;
     if (activeCollection.categoryFilter === "camisetas") {
-      return PRODUCTS.filter((p) => p.category === "camisetas" || p.type === "Camisetas" || p.category === "tops");
+      return list.filter((p: any) => p.category === "camisetas" || p.type === "Camisetas" || p.category === "tops");
     }
     if (activeCollection.categoryFilter === "seamless") {
-      return PRODUCTS.filter((p) => p.category === "seamless" || p.fabric.toLowerCase().includes("seamless"));
+      return list.filter((p: any) => p.category === "seamless" || (p.fabric || "").toLowerCase().includes("seamless"));
     }
-    return PRODUCTS;
-  }, [activeCollection]);
+    return list;
+  }, [products, activeCollection]);
 
   // Helper to get selected color for a product (defaults to first color)
   const getSelectedColor = (prod: Product) => {
@@ -207,13 +210,15 @@ export default function GradeAtacadoPage() {
   const handleAddAllToCart = () => {
     const itemsToAdd: { product: Product; size: string; color: string; quantity: number }[] = [];
 
+    const allList: Product[] = (products && products.length > 0 ? products : PRODUCTS) as Product[];
+
     Object.entries(quantities).forEach(([key, qty]) => {
       if (qty > 0) {
         const parts = key.split("-");
         const prodId = parts[0];
         const size = parts[parts.length - 1];
         const colorName = parts.slice(1, parts.length - 1).join("-");
-        const prod = PRODUCTS.find((p) => p.id === prodId);
+        const prod = allList.find((p) => p.id === prodId);
         if (prod) {
           itemsToAdd.push({
             product: prod,
@@ -421,13 +426,15 @@ export default function GradeAtacadoPage() {
 
                     {/* Color Pills & Swatches */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {product.colors.map((c) => {
-                        const isSelected = selectedColor === c.name;
+                      {(product.colors || []).map((c: any) => {
+                        const cName = typeof c === "string" ? c : c.name;
+                        const cHex = typeof c === "string" ? "#000000" : (c.hex || "#000000");
+                        const isSelected = selectedColor === cName;
                         return (
                           <button
-                            key={c.name}
+                            key={cName}
                             type="button"
-                            onClick={() => handleSelectColor(product.id, c.name)}
+                            onClick={() => handleSelectColor(product.id, cName)}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                               isSelected
                                 ? "bg-zinc-900 text-white border-zinc-900 shadow-sm ring-2 ring-am-magenta/40"
@@ -436,9 +443,9 @@ export default function GradeAtacadoPage() {
                           >
                             <span
                               className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
-                              style={{ backgroundColor: c.hex }}
+                              style={{ backgroundColor: cHex }}
                             />
-                            <span>{c.name}</span>
+                            <span>{cName}</span>
                           </button>
                         );
                       })}
@@ -489,7 +496,7 @@ export default function GradeAtacadoPage() {
 
                       {/* Size Counter Grid */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-                        {product.sizes.map((size) => {
+                        {(product.sizes || []).map((size: string) => {
                           const qty = getQty(product.id, selectedColor, size);
                           return (
                             <div

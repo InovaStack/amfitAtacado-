@@ -5,11 +5,12 @@ import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
 import { AdminProvider } from "@/context/AdminContext";
+import { AuthModal } from "@/components/AuthModal";
 
 export const metadata: Metadata = {
   title: "AM FIT - Moda Fitness Atacado & Varejo | Direto da Fábrica",
   description:
-    "Loja online oficial da AM FIT. Moda fitness feminina de alta compressão, zero transparência, conjuntos, calças, tops e linha sem costura. Atacado com margens de até 120% e varejo exclusivo.",
+    "Loja online oficial da AM FIT. Moda fitness feminina de alta performance e direto da fábrica. Lucre 100% com nossos produtos no atacado, exclusivo para revendedores, ou compre no varejo com preço especial.",
   keywords: [
     "AM FIT",
     "moda fitness atacado",
@@ -39,6 +40,7 @@ export default function RootLayout({
               {children}
               <CartDrawer />
               <QuickViewModal />
+              <AuthModal />
             </CartProvider>
           </AuthProvider>
         </AdminProvider>

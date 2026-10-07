@@ -2,11 +2,13 @@
 
 import React from "react";
 import Image from "next/image";
-import { CreditCard, QrCode, RotateCcw, Truck, Sparkles, Heart, ShoppingBag } from "lucide-react";
+import { CreditCard, QrCode, RotateCcw, Truck, Sparkles, Heart, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 export const RetailCTA: React.FC = () => {
   const { setMode } = useCart();
+  const { openAuthModal, isAuthenticated } = useAuth();
 
   return (
     <section id="varejo" className="py-20 bg-am-gray-50 border-b border-am-gray-200">
@@ -99,6 +101,16 @@ export const RetailCTA: React.FC = () => {
 
               {/* CTA Buttons */}
               <div className="pt-2 flex flex-wrap items-center gap-4">
+                {!isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("varejo", "register")}
+                    className="px-7 py-3.5 bg-am-magenta hover:bg-pink-600 text-white rounded-full font-black text-xs uppercase tracking-wider transition-all transform hover:scale-105 shadow-magenta-sm flex items-center gap-2"
+                  >
+                    <User size={16} />
+                    <span>Cadastrar Conta Varejo</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -106,7 +118,7 @@ export const RetailCTA: React.FC = () => {
                     const el = document.getElementById("destaques");
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="px-7 py-3.5 bg-am-black hover:bg-am-magenta text-white rounded-full font-black text-xs uppercase tracking-wider transition-all transform hover:scale-105 shadow-sm flex items-center gap-2"
+                  className="px-7 py-3.5 bg-am-black hover:bg-zinc-800 text-white rounded-full font-black text-xs uppercase tracking-wider transition-all transform hover:scale-105 shadow-sm flex items-center gap-2"
                 >
                   <ShoppingBag size={16} />
                   <span>Explorar Coleção Varejo</span>

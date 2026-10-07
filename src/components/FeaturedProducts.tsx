@@ -25,8 +25,12 @@ export const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   const filteredProducts = isSearching
     ? products
     : selectedCategory
-    ? products.filter((p) => p.category === selectedCategory || p.categories.includes(selectedCategory))
-    : products.filter((p) => p.isFeatured);
+    ? products.filter((p) => {
+        const catArray = Array.isArray(p.categories) ? p.categories : [];
+        const singleCat = (p.category || "").toLowerCase();
+        return catArray.includes(selectedCategory) || singleCat === selectedCategory;
+      })
+    : products.filter((p) => p.isFeatured || p.isNew || products.indexOf(p) < 12);
 
   return (
     <section id="destaques" className="py-10 sm:py-14 bg-am-gray-50/50">

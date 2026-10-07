@@ -72,28 +72,28 @@ export const CouponsTab: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-[family-name:var(--font-heading)]">
+          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight font-[family-name:var(--font-heading)]">
             Cupons Promocionais ({coupons.length})
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-500 mt-1">
             Crie cupons com desconto percentual ou fixo, valor mínimo, limite de uso e validade.
           </p>
         </div>
         <button
           onClick={openNewCouponModal}
-          className="px-5 py-2.5 bg-am-magenta hover:bg-pink-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-am-magenta/20 transition-all"
+          className="px-5 py-2.5 bg-am-magenta hover:bg-pink-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all"
         >
           <Plus size={16} /> Criar Novo Cupom
         </button>
       </div>
 
       {/* Coupons Table */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-950/60 text-zinc-400 uppercase tracking-wider border-b border-zinc-800">
+            <thead className="bg-zinc-50 text-zinc-500 uppercase tracking-wider border-b border-zinc-200">
               <tr>
                 <th className="py-3.5 px-4 font-semibold">Código</th>
                 <th className="py-3.5 px-4 font-semibold">Desconto</th>
@@ -104,32 +104,32 @@ export const CouponsTab: React.FC = () => {
                 <th className="py-3.5 px-4 font-semibold text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/60">
+            <tbody className="divide-y divide-zinc-100">
               {coupons.map((c) => (
-                <tr key={c.id} className="hover:bg-zinc-800/30 transition-colors">
+                <tr key={c.id} className="hover:bg-zinc-50/80 transition-colors">
                   <td className="py-3.5 px-4">
-                    <span className="font-mono font-black text-white bg-zinc-950 px-2.5 py-1 rounded border border-zinc-700 tracking-wider">
+                    <span className="font-mono font-black text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded border border-zinc-200 tracking-wider">
                       {c.code}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-black text-emerald-400 text-sm">
+                  <td className="py-3.5 px-4 font-black text-emerald-600 text-sm">
                     {c.discountType === "percentage"
                       ? `${c.discountValue}% OFF`
                       : `R$ ${c.discountValue},00 OFF`}
                   </td>
-                  <td className="py-3.5 px-4 text-zinc-300 font-semibold">
+                  <td className="py-3.5 px-4 text-zinc-700 font-semibold">
                     {c.minValue.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </td>
-                  <td className="py-3.5 px-4 text-zinc-400">{c.validUntil}</td>
+                  <td className="py-3.5 px-4 text-zinc-500">{c.validUntil}</td>
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white">
+                      <span className="font-bold text-zinc-800">
                         {c.usageCount} / {c.usageLimit}
                       </span>
-                      <div className="w-16 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                      <div className="w-16 h-1.5 bg-zinc-100 rounded-full overflow-hidden border border-zinc-200">
                         <div
                           className="h-full bg-am-magenta rounded-full"
                           style={{
@@ -147,8 +147,8 @@ export const CouponsTab: React.FC = () => {
                       onClick={() => toggleCouponActive(c.id)}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         c.active
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          : "bg-red-50 text-red-700 border border-red-200"
                       }`}
                     >
                       {c.active ? "Ativo" : "Inativo"}
@@ -158,7 +158,7 @@ export const CouponsTab: React.FC = () => {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEditCouponModal(c)}
-                        className="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg transition-colors"
+                        className="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-lg transition-colors border border-zinc-200"
                       >
                         <Edit2 size={13} />
                       </button>
@@ -168,7 +168,7 @@ export const CouponsTab: React.FC = () => {
                             deleteCoupon(c.id);
                           }
                         }}
-                        className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"
+                        className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors border border-red-200"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -183,15 +183,15 @@ export const CouponsTab: React.FC = () => {
 
       {/* Modal: Cupom (Novo / Editar) */}
       {couponModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6">
-              <h2 className="text-xl font-black text-white uppercase font-[family-name:var(--font-heading)]">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-zinc-200 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-8 animate-fadeIn">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-200 mb-6">
+              <h2 className="text-xl font-black text-zinc-900 uppercase font-[family-name:var(--font-heading)]">
                 {editingCoupon ? "Editar Cupom" : "Novo Cupom de Desconto"}
               </h2>
               <button
                 onClick={() => setCouponModalOpen(false)}
-                className="p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors"
+                className="p-2 text-zinc-400 hover:text-zinc-600 rounded-lg hover:bg-zinc-100 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -199,7 +199,7 @@ export const CouponsTab: React.FC = () => {
 
             <form onSubmit={handleSaveCoupon} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                   Código do Cupom *
                 </label>
                 <input
@@ -207,14 +207,14 @@ export const CouponsTab: React.FC = () => {
                   required
                   value={couponForm.code}
                   onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta font-mono font-bold tracking-widest uppercase"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta font-mono font-bold tracking-widest uppercase"
                   placeholder="Ex: PRIMEIRACOMPRA, ATACADO10"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                     Tipo de Desconto
                   </label>
                   <select
@@ -225,7 +225,7 @@ export const CouponsTab: React.FC = () => {
                         discountType: e.target.value as "percentage" | "fixed",
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta"
                   >
                     <option value="percentage">Porcentagem (%)</option>
                     <option value="fixed">Valor Fixo (R$)</option>
@@ -233,7 +233,7 @@ export const CouponsTab: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                     Valor do Desconto *
                   </label>
                   <input
@@ -246,7 +246,7 @@ export const CouponsTab: React.FC = () => {
                         discountValue: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta font-mono"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta font-mono"
                     placeholder="10"
                   />
                 </div>
@@ -254,7 +254,7 @@ export const CouponsTab: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                     Valor Mínimo do Pedido (R$)
                   </label>
                   <input
@@ -266,13 +266,13 @@ export const CouponsTab: React.FC = () => {
                         minValue: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta font-mono"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta font-mono"
                     placeholder="150"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                     Limite de Usos Totais
                   </label>
                   <input
@@ -284,21 +284,21 @@ export const CouponsTab: React.FC = () => {
                         usageLimit: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta font-mono"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta font-mono"
                     placeholder="100"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
                   Validade até
                 </label>
                 <input
                   type="date"
                   value={couponForm.validUntil}
                   onChange={(e) => setCouponForm({ ...couponForm, validUntil: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-hidden focus:border-am-magenta"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-am-magenta"
                 />
               </div>
 
@@ -310,22 +310,22 @@ export const CouponsTab: React.FC = () => {
                   onChange={(e) => setCouponForm({ ...couponForm, active: e.target.checked })}
                   className="rounded text-am-magenta focus:ring-am-magenta"
                 />
-                <label htmlFor="couponActive" className="text-xs text-zinc-300 font-semibold cursor-pointer">
+                <label htmlFor="couponActive" className="text-xs text-zinc-700 font-semibold cursor-pointer">
                   Cupom ativo para uso no checkout
                 </label>
               </div>
 
-              <div className="pt-4 border-t border-zinc-800 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-zinc-200 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setCouponModalOpen(false)}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl text-xs font-bold border border-zinc-200"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-am-magenta hover:bg-pink-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-am-magenta/25"
+                  className="px-6 py-2.5 bg-am-magenta hover:bg-pink-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
                 >
                   Salvar Cupom
                 </button>

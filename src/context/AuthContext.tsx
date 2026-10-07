@@ -458,6 +458,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
   const [authInitialProfile, setAuthInitialProfile] = useState<"varejo" | "atacado">("varejo");
 
+  // Inicializar banco local de usuários com demos se vazio
+  const getStoredUsers = (): (User & { password?: string })[] => {
+    try {
+      const db = localStorage.getItem("am_fit_users_db");
+      if (db) return JSON.parse(db);
+    } catch {
+      // ignore
+    }
+    const initialDb: (User & { password?: string })[] = [
+      { ...DEMO_VAREJO, password: "123" },
+      { ...DEMO_ATACADO_APROVADO, password: "123" },
+      { ...DEMO_ATACADO_PENDENTE, password: "123" },
+    ];
+    try {
+      localStorage.setItem("am_fit_users_db", JSON.stringify(initialDb));
+    } catch {
+      // ignore
+    }
+    return initialDb;
+  };
+
+  const saveUserToDb = (newUser: User & { password?: string }) => {
+    try {
+      const users = getStoredUsers();
+      const existingIdx = users.findIndex(
+        (u) => u.email.toLowerCase() === newUser.email.toLowerCase()
+      );
+      let updatedUsers: (User & { password?: string })[];
+      if (existingIdx >= 0) {
+        updatedUsers = [...users];
+        updatedUsers[existingIdx] = { ...users[existingIdx], ...newUser };
+      } else {
+        updatedUsers = [newUser, ...users];
+      }
+      localStorage.setItem("am_fit_users_db", JSON.stringify(updatedUsers));
+
+      // Também sincronizar com clientes do painel Admin
+      const adminClientsRaw = localStorage.getItem("am_fit_admin_clients");
+      let adminClients = adminClientsRaw ? JSON.parse(adminClientsRaw) : [];
+      const alreadyInAdmin = adminClients.some(
+        (c: any) => c.email?.toLowerCase() === newUser.email.toLowerCase()
+      );
+      if (!alreadyInAdmin) {
+        const newAdminClient = {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          phone: newUser.phone,
+          document: newUser.document,
+          accountType: newUser.accountType,
+          type: newUser.accountType,
+          companyName: newUser.companyName || (newUser.accountType === "atacado" ? "Empresa do Cliente" : undefined),
+          tradeName: newUser.tradeName || (newUser.accountType === "atacado" ? "Loja / Revenda" : undefined),
+          wholesaleStatus: newUser.wholesaleStatus || (newUser.accountType === "atacado" ? (requireWholesaleApproval ? "pending" : "approved") : undefined),
+          city: newUser.addresses?.[0]?.city || "São Paulo",
+          state: newUser.addresses?.[0]?.state || "SP",
+          totalOrders: newUser.orders?.length || 0,
+          totalSpent: newUser.orders?.reduce((acc, o) => acc + (o.total || 0), 0) || 0,
+          createdAt: new Date().toLocaleDateString("pt-BR"),
+        };
+        adminClients = [newAdminClient, ...adminClients];
+        localStorage.setItem("am_fit_admin_clients", JSON.stringify(adminClients));
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   // Carregar do localStorage
   useEffect(() => {
     try {
@@ -479,6 +547,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       if (user) {
         localStorage.setItem("am_fit_user", JSON.stringify(user));
+        // Atualiza no banco
+        saveUserToDb(user);
       } else {
         localStorage.removeItem("am_fit_user");
       }
@@ -507,11 +577,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setUser(chosenUser);
     setIsAuthModalOpen(false);
+
+    // Sincronizar modo do catálogo/carrinho com o tipo de conta
+    try {
+      localStorage.setItem("am_fit_mode", chosenUser.accountType);
+    } catch {
+      // ignore
+    }
   };
 
   const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
-    // Simulação de login
     const cleanEmail = email.toLowerCase().trim();
+    if (!cleanEmail) {
+      return { success: false, message: "Por favor, digite seu e-mail." };
+    }
+
+    const usersDb = getStoredUsers();
+    const foundUser = usersDb.find((u) => u.email.toLowerCase() === cleanEmail);
+
+    if (foundUser) {
+      if (foundUser.password && password && foundUser.password !== password) {
+        return { success: false, message: "Senha incorreta. Verifique os dados digitados." };
+      }
+      const { password: _, ...userWithoutPassword } = foundUser;
+      setUser(userWithoutPassword);
+      setIsAuthModalOpen(false);
+
+      // Sincronizar modo
+      try {
+        localStorage.setItem("am_fit_mode", userWithoutPassword.accountType);
+      } catch {
+        // ignore
+      }
+      return { success: true };
+    }
+
+    // Verificar demos diretas caso o DB local não tenha carregado
     if (cleanEmail === DEMO_VAREJO.email.toLowerCase()) {
       setUser(DEMO_VAREJO);
       setIsAuthModalOpen(false);
@@ -528,47 +629,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     }
 
-    // Login com qualquer email cadastrado
-    const isAtacadoCandidate = cleanEmail.includes("atacado") || cleanEmail.includes("loja") || cleanEmail.includes("fit");
-    const newUser: User = {
-      id: `usr-${Date.now()}`,
-      name: email.split("@")[0].replace(".", " ").toUpperCase(),
-      email: cleanEmail,
-      phone: "(11) 99999-9999",
-      accountType: isAtacadoCandidate ? "atacado" : "varejo",
-      document: isAtacadoCandidate ? "12.345.678/0001-90" : "123.456.789-00",
-      companyName: isAtacadoCandidate ? "Empresa Moda Fitness Ltda" : undefined,
-      tradeName: isAtacadoCandidate ? "Loja Parceira AM FIT" : undefined,
-      wholesaleStatus: isAtacadoCandidate ? (requireWholesaleApproval ? "pending" : "approved") : undefined,
-      addresses: [
-        {
-          id: `addr-${Date.now()}`,
-          label: "Principal",
-          recipientName: email.split("@")[0],
-          street: "Rua do Comércio",
-          number: "100",
-          neighborhood: "Centro",
-          city: "São Paulo",
-          state: "SP",
-          zipCode: "01001-000",
-          isDefault: true,
-        },
-      ],
-      orders: [],
-      quotes: [],
+    return { 
+      success: false, 
+      message: "E-mail não cadastrado. Crie sua conta escolhendo entre Varejo ou Atacado!" 
     };
-
-    setUser(newUser);
-    setIsAuthModalOpen(false);
-    return { success: true };
   };
 
   const register = async (data: RegisterData): Promise<{ success: boolean; message?: string }> => {
+    const cleanEmail = data.email.toLowerCase().trim();
+    if (!cleanEmail) {
+      return { success: false, message: "E-mail é obrigatório." };
+    }
+
+    const usersDb = getStoredUsers();
+    const existing = usersDb.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      return { 
+        success: false, 
+        message: "Este e-mail já está cadastrado em nosso sistema. Faça login para acessar." 
+      };
+    }
+
     const isAtacado = data.accountType === "atacado";
-    const newUser: User = {
+    const newUser: User & { password?: string } = {
       id: `usr-${Date.now()}`,
       name: data.name,
-      email: data.email.toLowerCase().trim(),
+      email: cleanEmail,
       phone: data.phone,
       accountType: data.accountType,
       document: data.document,
@@ -576,18 +662,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       tradeName: data.tradeName,
       stateRegistration: data.stateRegistration,
       resaleType: data.resaleType,
-      // Se requireWholesaleApproval for false, já inicia aprovado
+      password: data.password || "",
       wholesaleStatus: isAtacado ? (requireWholesaleApproval ? "pending" : "approved") : undefined,
       wholesaleApprovedAt: isAtacado && !requireWholesaleApproval ? new Date().toLocaleDateString("pt-BR") : undefined,
       addresses: data.address
         ? [{ ...data.address, id: `addr-${Date.now()}`, isDefault: true }]
-        : [],
+        : [
+            {
+              id: `addr-${Date.now()}`,
+              label: isAtacado ? "Loja / Empresa" : "Residencial",
+              recipientName: data.name,
+              street: "Rua Principal",
+              number: "100",
+              neighborhood: "Centro",
+              city: "São Paulo",
+              state: "SP",
+              zipCode: "01001-000",
+              isDefault: true,
+            },
+          ],
       orders: [],
       quotes: [],
     };
 
-    setUser(newUser);
+    saveUserToDb(newUser);
+    const { password: _, ...userWithoutPassword } = newUser;
+    setUser(userWithoutPassword);
     setIsAuthModalOpen(false);
+
+    try {
+      localStorage.setItem("am_fit_mode", data.accountType);
+    } catch {
+      // ignore
+    }
+
     return { success: true };
   };
 

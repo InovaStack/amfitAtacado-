@@ -4,26 +4,47 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Truck, RefreshCw, Zap } from "lucide-react";
 import { CAMPAIGNS } from "@/data/products";
+import { useAdmin } from "@/context/AdminContext";
 
 export const HeroBanner: React.FC = () => {
+  const { banners } = useAdmin();
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Active banners from admin or fallback to default campaigns
+  const activeBanners = (banners && banners.length > 0)
+    ? banners.filter((b) => (b.active ?? b.isActive ?? true))
+    : [];
+
+  const slideList = activeBanners.length > 0
+    ? activeBanners.map((b) => ({
+        id: b.id,
+        tag: b.tag || (b.category ? b.category.toUpperCase() : "DESTAQUE"),
+        badge: b.badge || "AM FIT Exclusivo",
+        title: b.title,
+        subtitle: b.subtitle || "",
+        image: b.imageUrl || b.image || "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85",
+        ctaText: b.ctaText || "VER COLEÇÃO",
+        ctaLink: b.ctaLink || "/catalogo",
+      }))
+    : CAMPAIGNS;
+
   useEffect(() => {
+    if (slideList.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % CAMPAIGNS.length);
+      setCurrentSlide((prev) => (prev + 1) % slideList.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slideList.length]);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % CAMPAIGNS.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + CAMPAIGNS.length) % CAMPAIGNS.length);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slideList.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slideList.length) % slideList.length);
 
   return (
     <section className="bg-white">
       {/* Banner Container com layout contido e proporções modernas */}
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-3 sm:pt-4">
         <div className="relative w-full h-[240px] sm:h-[310px] md:h-[350px] lg:h-[380px] rounded-2xl sm:rounded-3xl overflow-hidden bg-zinc-950 shadow-md">
-          {CAMPAIGNS.map((campaign, idx) => (
+          {slideList.map((campaign, idx) => (
             <div
               key={campaign.id}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
@@ -103,7 +124,7 @@ export const HeroBanner: React.FC = () => {
 
           {/* Dots compactos */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
-            {CAMPAIGNS.map((_, index) => (
+            {slideList.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -117,46 +138,46 @@ export const HeroBanner: React.FC = () => {
         </div>
       </div>
 
-      {/* Barra de Benefícios Compacta e Otimizada */}
-      <div className="border-b border-am-gray-200 py-3 sm:py-4 px-4 sm:px-6 lg:px-8 xl:px-10 mt-3 sm:mt-4">
+      {/* Barra de Benefícios Oficial da Loja */}
+      <div className="border-b border-am-gray-200 py-3.5 sm:py-4 px-4 sm:px-6 lg:px-8 xl:px-10 mt-3 sm:mt-4 bg-zinc-50/70">
         <div className="w-full max-w-[1720px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-am-magenta-light text-am-magenta flex items-center justify-center flex-shrink-0">
-              <Truck size={17} />
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-zinc-200/80 shadow-xs">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 text-base">
+              ✨
             </div>
             <div>
-              <h4 className="font-bold text-xs text-am-black leading-tight">Envio Brasil</h4>
-              <p className="text-[11px] text-zinc-500 leading-tight">Frete facilitado</p>
+              <h4 className="font-extrabold text-xs text-zinc-900 leading-tight">Lucre 100%</h4>
+              <p className="text-[11px] text-zinc-500 leading-tight">Com nossos produtos</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-zinc-100 text-am-magenta flex items-center justify-center flex-shrink-0">
-              <Zap size={17} />
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-zinc-200/80 shadow-xs">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-zinc-100 text-zinc-800 flex items-center justify-center flex-shrink-0 text-base">
+              📦
             </div>
             <div>
-              <h4 className="font-bold text-xs text-am-black leading-tight">Preço de Fábrica</h4>
-              <p className="text-[11px] text-zinc-500 leading-tight">Varejo & Atacado</p>
+              <h4 className="font-extrabold text-xs text-zinc-900 leading-tight">Atacado</h4>
+              <p className="text-[11px] text-zinc-500 leading-tight">Preço de fábrica</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-am-magenta-light text-am-magenta flex items-center justify-center flex-shrink-0">
-              <ShieldCheck size={17} />
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-zinc-200/80 shadow-xs">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center flex-shrink-0 text-base">
+              💼
             </div>
             <div>
-              <h4 className="font-bold text-xs text-am-black leading-tight">Zero Transparência</h4>
-              <p className="text-[11px] text-zinc-500 leading-tight">Poliamida premium</p>
+              <h4 className="font-extrabold text-xs text-zinc-900 leading-tight">Exclusivo</h4>
+              <p className="text-[11px] text-zinc-500 leading-tight">Para revendedores</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-zinc-100 text-am-magenta flex items-center justify-center flex-shrink-0">
-              <RefreshCw size={17} />
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-zinc-200/80 shadow-xs">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-pink-50 text-am-magenta flex items-center justify-center flex-shrink-0 text-base">
+              🚀
             </div>
             <div>
-              <h4 className="font-bold text-xs text-am-black leading-tight">1ª Troca Grátis</h4>
-              <p className="text-[11px] text-zinc-500 leading-tight">Até 7 dias</p>
+              <h4 className="font-extrabold text-xs text-zinc-900 leading-tight">Seu Negócio</h4>
+              <p className="text-[11px] text-zinc-500 leading-tight">Começa aqui</p>
             </div>
           </div>
         </div>

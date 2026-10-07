@@ -13,9 +13,12 @@ import {
   MapPin,
   User,
   Phone,
-  FileText
+  FileText,
+  Building2
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
+import { useAuth } from "@/context/AuthContext";
 import { getWhatsAppLink } from "@/config/store";
 
 interface DeliveryInfo {
@@ -41,7 +44,11 @@ export const CartDrawer: React.FC = () => {
     setMode,
     subtotal,
     totalItems,
+    isWholesaleQualified,
+    wholesaleMinTarget,
   } = useCart();
+  const { addOrder, storeConfig } = useAdmin();
+  const { user } = useAuth();
 
   // Delivery Form State
   const [delivery, setDelivery] = useState<DeliveryInfo>({
@@ -149,14 +156,15 @@ export const CartDrawer: React.FC = () => {
   const isAddressValid = delivery.address.trim().length >= 4;
   const isCityValid = delivery.city.trim().length >= 3;
 
+  const isWhatsAppActive = storeConfig.channelsStatus?.whatsappActive !== false;
   const isDeliveryComplete = isNameValid && isPhoneValid && isCepValid && isAddressValid && isCityValid;
-  const canFinalize = items.length > 0 && isDeliveryComplete;
+  const canFinalize = items.length > 0 && isDeliveryComplete && isWhatsAppActive && isWholesaleQualified;
 
   if (!isCartOpen) return null;
 
   // Build WhatsApp Checkout message
   const handleWhatsAppCheckout = () => {
-    if (!canFinalize) return;
+    if (!canFinalize || !isWhatsAppActive) return;
 
     let message = `*NOVO PEDIDO AM FIT - ${mode.toUpperCase()}*\n\n`;
     message += `Olá! Gostaria de fechar o seguinte pedido:\n\n`;
@@ -189,7 +197,46 @@ export const CartDrawer: React.FC = () => {
 
     message += `\nPor favor, confirme a disponibilidade e envie as opções de frete e chave PIX para pagamento!`;
 
-    window.open(getWhatsAppLink(message), "_blank");
+    // Criar pedido no painel Admin automaticamente
+    const newOrderNumber = `${mode === "atacado" ? "ATAC" : "AM"}-${Math.floor(10000 + Math.random() * 90000)}`;
+    const orderItems = items.map((i) => ({
+      name: i.product.name,
+      productName: i.product.name,
+      sku: i.product.sku,
+      size: i.size,
+      color: i.color,
+      quantity: i.quantity,
+      price: mode === "atacado" ? (i.product.wholesalePrice ?? (i.product as any).priceWholesale ?? 0) : (i.product.retailPrice ?? (i.product as any).priceRetail ?? 0),
+      unitPrice: mode === "atacado" ? (i.product.wholesalePrice ?? (i.product as any).priceWholesale ?? 0) : (i.product.retailPrice ?? (i.product as any).priceRetail ?? 0),
+    }));
+
+    addOrder({
+      orderNumber: newOrderNumber,
+      customerName: delivery.recipientName.trim(),
+      clientName: delivery.recipientName.trim(),
+      customerEmail: user?.email || `${delivery.recipientName.toLowerCase().replace(/\s+/g, ".")}@cliente.com`,
+      clientEmail: user?.email || `${delivery.recipientName.toLowerCase().replace(/\s+/g, ".")}@cliente.com`,
+      customerPhone: delivery.phone.trim(),
+      clientPhone: delivery.phone.trim(),
+      customerDocument: user?.document || "Consumidor Final",
+      customerType: mode,
+      type: mode,
+      companyName: user?.companyName,
+      date: new Date().toLocaleDateString("pt-BR"),
+      status: "Novo",
+      itemsCount: totalItems,
+      subtotal,
+      shipping: 0,
+      total: subtotal,
+      paymentMethod: "A combinar via WhatsApp",
+      trackingCode: "GERANDO-RASTREIO",
+      carrier: "Correios (Sedex)",
+      trackingCompany: "Correios (Sedex)",
+      address: `${delivery.address.trim()} - ${delivery.city.trim()} (CEP: ${delivery.cep.trim()})`,
+      items: orderItems,
+    });
+
+    window.open(getWhatsAppLink(message, storeConfig.contact.whatsappNumber), "_blank");
   };
 
   return (
@@ -539,12 +586,24 @@ export const CartDrawer: React.FC = () => {
 
               {/* Avisos de Validação */}
               <div className="space-y-2">
-                {!isDeliveryComplete && (
+                {!isWhatsAppActive ? (
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs sm:text-sm flex items-center gap-2.5">
+                    <PhoneCall size={18} className="shrink-0 text-amber-600" />
+                    <span>O canal de pedidos via WhatsApp está pausado pela administração no momento.</span>
+                  </div>
+                ) : mode === "atacado" && !isWholesaleQualified ? (
+                  <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-300 text-purple-900 text-xs sm:text-sm flex items-center gap-2.5">
+                    <Building2 size={18} className="shrink-0 text-purple-600" />
+                    <span>
+                      <strong>Pedido Mínimo de Atacado:</strong> Adicione pelo menos {storeConfig.commercial?.minWholesalePieces || 6} peças variadas ou R$ {(storeConfig.commercial?.minWholesaleOrderAmount || 300).toLocaleString("pt-BR")},00 para liberar o checkout de fábrica.
+                    </span>
+                  </div>
+                ) : !isDeliveryComplete ? (
                   <div className="p-3 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-700 text-xs sm:text-sm flex items-center gap-2.5">
                     <MapPin size={18} className="shrink-0 text-am-magenta" />
                     <span>Preencha os dados de entrega acima para liberar o botão.</span>
                   </div>
-                )}
+                ) : null}
 
                 {/* Botão Condicional para Finalizar no WhatsApp Ampliado */}
                 <button
@@ -554,19 +613,25 @@ export const CartDrawer: React.FC = () => {
                   className={`w-full py-4 sm:py-4.5 px-6 rounded-2xl font-black text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-3 transition-all shadow-lg ${
                     canFinalize
                       ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30 cursor-pointer active:scale-98"
-                      : "bg-zinc-200 text-zinc-400 cursor-not-allowed border border-zinc-300 shadow-none"
+                      : "bg-zinc-200 text-zinc-400 cursor-not-allowed border border-zinc-300 shadow-none opacity-60 grayscale"
                   }`}
                 >
                   <PhoneCall size={22} />
                   <span>
-                    {canFinalize
+                    {!isWhatsAppActive
+                      ? "Canal WhatsApp Temporariamente Indisponível"
+                      : mode === "atacado" && !isWholesaleQualified
+                      ? "Atingir Mínimo de Atacado para Finalizar"
+                      : canFinalize
                       ? "Finalizar Pedido no WhatsApp"
                       : "Preencha a Entrega para Finalizar"}
                   </span>
                 </button>
 
                 <p className="text-center text-xs text-zinc-500 pt-1">
-                  Ao clicar, seus dados e a lista do pedido serão enviados diretamente ao WhatsApp da fábrica.
+                  {isWhatsAppActive 
+                    ? "Ao clicar, seus dados e a lista do pedido serão enviados diretamente ao WhatsApp da fábrica."
+                    : "Aguarde a reativação do canal pela loja para envio de novos pedidos."}
                 </p>
               </div>
             </div>

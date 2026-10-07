@@ -13,16 +13,19 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { mode, addToCart, setQuickViewProduct, favorites, toggleFavorite } = useCart();
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "");
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
+  const firstColor = (product.colors && product.colors[0]) ? product.colors[0].name : "Preto";
+  const firstSize = (product.sizes && product.sizes[0]) ? product.sizes[0] : "M";
+
+  const [selectedColor, setSelectedColor] = useState(firstColor);
+  const [selectedSize, setSelectedSize] = useState(firstSize);
   const [isHovered, setIsHovered] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
   const isFavorite = favorites.includes(product.id);
 
   // Selected variation stock
-  const currentVariation = product.variations.find(
-    (v) => v.color === selectedColor && v.size === selectedSize
+  const currentVariation = (product.variations || []).find(
+    (v: any) => v.color === selectedColor && v.size === selectedSize
   );
   const variationStock = currentVariation ? currentVariation.stock : product.stock;
 
@@ -38,8 +41,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     setQuickViewProduct(product);
   };
 
-  const currentPrice = mode === "atacado" ? product.wholesalePrice : product.retailPrice;
-  const alternatePrice = mode === "atacado" ? product.retailPrice : product.wholesalePrice;
+  const retailVal = Number(product.retailPrice ?? (product as any).priceRetail ?? 0);
+  const wholesaleVal = Number(product.wholesalePrice ?? (product as any).priceWholesale ?? 0);
+  const currentPrice = mode === "atacado" ? wholesaleVal : retailVal;
+  const alternatePrice = mode === "atacado" ? retailVal : wholesaleVal;
 
   return (
     <div 
@@ -97,13 +102,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         href={`/produto/${getProductSlug(product)}`}
         className="relative w-full aspect-[4/5] bg-zinc-100 overflow-hidden cursor-pointer block"
       >
-        <Image
-          src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-        />
+        {(() => {
+          const mainImg = (product.images && product.images[0]) ? product.images[0] : "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80";
+          const hoverImg = (isHovered && product.images && product.images[1]) ? product.images[1] : mainImg;
+          
+          return (
+            <Image
+              src={hoverImg}
+              alt={product.name}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            />
+          );
+        })()}
 
         {/* Stock / Ref pill at bottom of image */}
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] pointer-events-none">
@@ -150,20 +162,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Color swatches */}
           <div className="flex items-center gap-1.5 mb-2.5">
-            {product.colors.map((color) => (
-              <button
-                key={color.name}
-                type="button"
-                onClick={() => setSelectedColor(color.name)}
-                title={color.name}
-                className={`w-4 h-4 rounded-full border transition-all ${
-                  selectedColor === color.name
-                    ? "ring-2 ring-am-magenta ring-offset-1 scale-110"
-                    : "border-zinc-300 hover:scale-105"
-                }`}
-                style={{ backgroundColor: color.hex }}
-              />
-            ))}
+            {(product.colors || []).map((color: any) => {
+              const cName = typeof color === "string" ? color : color.name;
+              const cHex = typeof color === "string" ? "#000000" : (color.hex || "#000000");
+
+              return (
+                <button
+                  key={cName}
+                  type="button"
+                  onClick={() => setSelectedColor(cName)}
+                  title={cName}
+                  className={`w-4 h-4 rounded-full border transition-all ${
+                    selectedColor === cName
+                      ? "ring-2 ring-am-magenta ring-offset-1 scale-110"
+                      : "border-zinc-300 hover:scale-105"
+                  }`}
+                  style={{ backgroundColor: cHex }}
+                />
+              );
+            })}
             <span className="text-[11px] text-zinc-500 ml-1 truncate">
               {selectedColor}
             </span>
@@ -173,7 +190,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1">
               <span className="text-[11px] text-zinc-400 mr-0.5 font-medium">Tam:</span>
-              {product.sizes.map((size) => (
+              {(product.sizes || []).map((size) => (
                 <button
                   key={size}
                   type="button"

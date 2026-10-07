@@ -18,16 +18,24 @@ import {
   Lock 
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
 
 export const QuickViewModal: React.FC = () => {
   const {
-    quickViewProduct,
+    quickViewProduct: rawQuickViewProduct,
     setQuickViewProduct,
     mode,
     addToCart,
     favorites,
     toggleFavorite,
   } = useCart();
+  const { products } = useAdmin();
+
+  // Find updated product from AdminContext if exists
+  const liveMatch = rawQuickViewProduct
+    ? products.find((p: any) => p.id === rawQuickViewProduct.id)
+    : null;
+  const quickViewProduct = (liveMatch as any) || rawQuickViewProduct;
 
   const [selectedImg, setSelectedImg] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
@@ -40,22 +48,24 @@ export const QuickViewModal: React.FC = () => {
   useEffect(() => {
     if (quickViewProduct) {
       setSelectedImg(0);
-      setSelectedSize(quickViewProduct.sizes[0] || "");
-      setSelectedColor(quickViewProduct.colors[0]?.name || "");
+      setSelectedSize(quickViewProduct.sizes?.[0] || "");
+      setSelectedColor(quickViewProduct.colors?.[0]?.name || "");
       setQuantity(1);
       setAdded(false);
       setActiveTab("compra");
     }
-  }, [quickViewProduct]);
+  }, [quickViewProduct?.id]);
 
   if (!quickViewProduct) return null;
 
-  const currentPrice = mode === "atacado" ? quickViewProduct.wholesalePrice : quickViewProduct.retailPrice;
+  const currentPrice = mode === "atacado" 
+    ? (quickViewProduct.wholesalePrice ?? quickViewProduct.priceWholesale ?? 0) 
+    : (quickViewProduct.retailPrice ?? quickViewProduct.priceRetail ?? 0);
   const isFavorite = favorites.includes(quickViewProduct.id);
 
   // Selected variation stock
-  const currentVariation = quickViewProduct.variations.find(
-    (v) => v.color === selectedColor && v.size === selectedSize
+  const currentVariation = (quickViewProduct.variations || []).find(
+    (v: any) => v.color === selectedColor && v.size === selectedSize
   );
   const activeStock = currentVariation ? currentVariation.stock : quickViewProduct.stock;
   const activeSku = currentVariation ? currentVariation.sku : quickViewProduct.sku;
@@ -138,9 +148,9 @@ export const QuickViewModal: React.FC = () => {
             </div>
 
             {/* Thumbnails */}
-            {quickViewProduct.images.length > 1 && (
+            {(quickViewProduct.images || []).length > 1 && (
               <div className="flex gap-2.5 mt-3">
-                {quickViewProduct.images.map((img, i) => (
+                {(quickViewProduct.images || []).map((img: string, i: number) => (
                   <button
                     key={i}
                     onClick={() => setSelectedImg(i)}
@@ -275,20 +285,25 @@ export const QuickViewModal: React.FC = () => {
                       Cor Selecionada: <span className="text-am-magenta font-semibold">{selectedColor}</span>
                     </label>
                     <div className="flex gap-2">
-                      {quickViewProduct.colors.map((color) => (
-                        <button
-                          key={color.name}
-                          type="button"
-                          onClick={() => setSelectedColor(color.name)}
-                          className={`w-7 h-7 rounded-full border transition-all ${
-                            selectedColor === color.name
-                              ? "ring-2 ring-am-magenta ring-offset-2 scale-110"
-                              : "border-zinc-300 hover:scale-105"
-                          }`}
-                          style={{ backgroundColor: color.hex }}
-                          title={color.name}
-                        />
-                      ))}
+                      {(quickViewProduct.colors || []).map((color: any) => {
+                        const cName = typeof color === "string" ? color : color.name;
+                        const cHex = typeof color === "string" ? "#000000" : (color.hex || "#000000");
+
+                        return (
+                          <button
+                            key={cName}
+                            type="button"
+                            onClick={() => setSelectedColor(cName)}
+                            className={`w-7 h-7 rounded-full border transition-all ${
+                              selectedColor === cName
+                                ? "ring-2 ring-am-magenta ring-offset-2 scale-110"
+                                : "border-zinc-300 hover:scale-105"
+                            }`}
+                            style={{ backgroundColor: cHex }}
+                            title={cName}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -303,7 +318,7 @@ export const QuickViewModal: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex gap-2">
-                      {quickViewProduct.sizes.map((size) => (
+                      {(quickViewProduct.sizes || []).map((size: string) => (
                         <button
                           key={size}
                           type="button"
@@ -336,7 +351,7 @@ export const QuickViewModal: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-am-gray-200">
-                      {quickViewProduct.variations.map((v) => (
+                      {(quickViewProduct.variations || []).map((v: any) => (
                         <tr 
                           key={v.id} 
                           onClick={() => {
