@@ -236,11 +236,40 @@ export const ProductsTab: React.FC = () => {
       };
     });
 
+    const activeSizes = productForm.sizes.length > 0 ? productForm.sizes : ["P", "M", "G"];
+    const totalCombos = Math.max(1, (formattedColors.length || 1) * (activeSizes.length || 1));
+    const stockPerVariation = Math.max(1, Math.floor((Number(productForm.stock) || 50) / totalCombos));
+
+    const generatedVariations = formattedColors.flatMap((colorObj) =>
+      activeSizes.map((sz) => {
+        const cleanSku = `${productForm.sku.trim()}-${colorObj.name.slice(0, 3).toUpperCase()}-${sz}`;
+        const existingVar = (editingProduct?.variations || []).find(
+          (v: any) => v.color === colorObj.name && v.size === sz
+        );
+
+        return {
+          id: existingVar?.id || `var-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          sku: existingVar?.sku || cleanSku,
+          color: colorObj.name,
+          colorHex: colorObj.hex,
+          size: sz,
+          stock: existingVar ? existingVar.stock : stockPerVariation,
+        };
+      })
+    );
+
     const payload = {
       name: productForm.name.trim(),
       sku: productForm.sku.trim(),
       department: productForm.department as any,
       category: productForm.category as any,
+      categories: [
+        productForm.department.toLowerCase(),
+        productForm.category.toLowerCase(),
+        "moda-fitness",
+        ...(productForm.isBestSeller ? ["mais-vendidos"] : []),
+        ...(productForm.isFeatured ? ["destaques"] : []),
+      ],
       badge: productForm.badge.trim() || undefined,
       priceRetail: priceRetailNum,
       priceWholesale: priceWholesaleNum,
@@ -249,10 +278,11 @@ export const ProductsTab: React.FC = () => {
       originalPrice: originalPriceNum > 0 ? originalPriceNum : undefined,
       minWholesaleQty: Number(productForm.minWholesaleQty) || 6,
       stock: Number(productForm.stock) || 0,
+      variations: generatedVariations,
       fabric: productForm.fabric.trim(),
       description: productForm.description.trim(),
       images: finalImages,
-      sizes: productForm.sizes.length > 0 ? productForm.sizes : ["P", "M", "G"],
+      sizes: activeSizes,
       colors: formattedColors,
       isFeatured: productForm.isFeatured,
       isBestSeller: productForm.isBestSeller,

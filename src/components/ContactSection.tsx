@@ -163,7 +163,7 @@ export const ContactSection: React.FC = () => {
                     </div>
                     {isActive ? (
                       <span className="inline-flex items-center text-[11px] font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                        Frete & Cupons
+                        Frete & Ofertas
                       </span>
                     ) : (
                       <span className="inline-flex items-center text-[11px] font-bold text-zinc-500 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-300">
@@ -174,7 +174,7 @@ export const ContactSection: React.FC = () => {
                   <h3 className="font-black text-base text-zinc-900 mb-1">Shopee Oficial</h3>
                   <p className="text-xs text-zinc-500 leading-relaxed mb-4">
                     {isActive
-                      ? "Compre no varejo com cupons de frete grátis da plataforma e milhares de avaliações 5 estrelas."
+                      ? "Compre no varejo com condições especiais da plataforma e milhares de avaliações 5 estrelas."
                       : "Canal temporariamente indisponível."}
                   </p>
                   <div className="text-xs font-bold text-orange-700 bg-orange-50/60 px-3 py-2 rounded-lg border border-orange-200 mb-4">

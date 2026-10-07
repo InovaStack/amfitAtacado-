@@ -424,6 +424,22 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({ initialSelectedOrder }) =>
               </div>
             </div>
 
+            {/* Endereço & Entrega */}
+            {selectedOrder.address && (
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs space-y-1">
+                <span className="text-zinc-400 text-[10px] uppercase font-bold flex items-center gap-1">
+                  <MapPin size={12} className="text-am-magenta" />
+                  <span>Endereço de Envio</span>
+                </span>
+                <p className="text-zinc-800 font-medium">{selectedOrder.address}</p>
+                {selectedOrder.trackingCode && selectedOrder.trackingCode !== "GERANDO-RASTREIO" && (
+                  <p className="text-zinc-500 pt-0.5 text-[11px]">
+                    Rastreamento: <strong className="font-mono text-cyan-700 font-bold">{selectedOrder.trackingCode}</strong> ({selectedOrder.carrier || selectedOrder.trackingCompany || "Correios"})
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Items list */}
             <div>
               <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2">

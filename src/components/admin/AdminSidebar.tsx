@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 
-export type AdminTab = "dashboard" | "produtos" | "pedidos" | "clientes" | "banners" | "cupons" | "configuracoes";
+export type AdminTab = "dashboard" | "produtos" | "pedidos" | "clientes" | "banners" | "configuracoes";
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
@@ -27,7 +27,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-  const { products, orders, clients, banners, coupons, adminLogout } = useAdmin();
+  const { products, orders, clients, banners, adminLogout } = useAdmin();
 
   const pendingOrders = orders.filter(
     (o) => o.status === "Novo" || o.status === "Em preparação" || o.status === "novo" || o.status === "preparacao"
@@ -156,27 +156,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             }`}
           >
             {banners.length}
-          </span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("cupons")}
-          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === "cupons"
-              ? "bg-am-magenta text-white shadow-magenta-sm"
-              : "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <Tag size={17} />
-            <span>Cupons</span>
-          </div>
-          <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-              activeTab === "cupons" ? "bg-white/20 text-white" : "bg-zinc-100 text-zinc-600"
-            }`}
-          >
-            {coupons.length}
           </span>
         </button>
 

@@ -16,7 +16,7 @@ import {
   ShieldCheck,
   Building2,
   AlertCircle,
-  Tag,
+  Settings,
   CheckCircle2,
   Percent
 } from "lucide-react";
@@ -131,11 +131,11 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab("cupons")}
+            onClick={() => setActiveTab("configuracoes")}
             className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border border-zinc-200"
           >
-            <Tag size={14} className="text-emerald-600" />
-            <span>Novo Cupom</span>
+            <Settings size={14} className="text-zinc-600" />
+            <span>Configurações</span>
           </button>
         </div>
       </div>

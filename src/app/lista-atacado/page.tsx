@@ -56,7 +56,7 @@ const WHOLESALE_COLLECTIONS = [
 
 export default function GradeAtacadoPage() {
   const { mode, setMode, addMultipleToCart, setIsCartOpen } = useCart();
-  const { products } = useAdmin();
+  const { products, storeConfig } = useAdmin();
 
   const [activeCollectionId, setActiveCollectionId] = useState("verao-2026");
   const [selectedColorPerProduct, setSelectedColorPerProduct] = useState<Record<string, string>>({});
@@ -299,7 +299,9 @@ export default function GradeAtacadoPage() {
               </div>
               <div className="text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80 flex justify-between">
                 <span>Pedido mínimo atacado:</span>
-                <strong className="text-white">R$ 300 ou 6 peças</strong>
+                <strong className="text-white">
+                  R$ {storeConfig?.commercial?.minWholesaleOrderAmount || 300} ou {storeConfig?.commercial?.minWholesalePieces || 6} peças
+                </strong>
               </div>
             </div>
           </div>

@@ -9,7 +9,6 @@ import { ProductsTab } from "@/components/admin/ProductsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { ClientsTab } from "@/components/admin/ClientsTab";
 import { BannersTab } from "@/components/admin/BannersTab";
-import { CouponsTab } from "@/components/admin/CouponsTab";
 import { SettingsTab } from "@/components/admin/SettingsTab";
 
 export default function AdminPage() {
@@ -50,8 +49,6 @@ export default function AdminPage() {
         {activeTab === "clientes" && <ClientsTab />}
 
         {activeTab === "banners" && <BannersTab />}
-
-        {activeTab === "cupons" && <CouponsTab />}
 
         {activeTab === "configuracoes" && <SettingsTab />}
       </main>

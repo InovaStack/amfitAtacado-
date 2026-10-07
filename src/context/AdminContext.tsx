@@ -120,23 +120,6 @@ export interface AdminBanner {
   active?: boolean;
 }
 
-export interface AdminCoupon {
-  id: string;
-  code: string;
-  discountType: "percentage" | "fixed";
-  discountValue: number;
-  minOrderValue?: number;
-  minValue: number;
-  validUntil: string;
-  maxUses?: number;
-  usageLimit: number;
-  usedCount?: number;
-  usageCount: number;
-  applicableTo?: "todos" | "varejo" | "atacado";
-  isActive?: boolean;
-  active?: boolean;
-}
-
 interface AdminContextType {
   isAdminAuthenticated: boolean;
   adminUser: AdminUser | null;
@@ -167,14 +150,6 @@ interface AdminContextType {
   deleteBanner: (id: string) => void;
   toggleBannerStatus: (id: string) => void;
   toggleBannerActive: (id: string) => void;
-
-  // Cupons
-  coupons: AdminCoupon[];
-  addCoupon: (coupon: Omit<AdminCoupon, "id" | "usedCount"> | any) => void;
-  updateCoupon: (id: string, coupon: Partial<AdminCoupon> | any) => void;
-  deleteCoupon: (id: string) => void;
-  toggleCouponStatus: (id: string) => void;
-  toggleCouponActive: (id: string) => void;
 
   // Configurações da Loja & Políticas
   storeConfig: StoreConfig;
@@ -415,69 +390,6 @@ const INITIAL_ADMIN_BANNERS: AdminBanner[] = [
   },
 ];
 
-const INITIAL_ADMIN_COUPONS: AdminCoupon[] = [
-  {
-    id: "cup-1",
-    code: "BEMVINDO10",
-    discountType: "percentage",
-    discountValue: 10,
-    minOrderValue: 150.00,
-    minValue: 150.00,
-    validUntil: "31/12/2026",
-    maxUses: 500,
-    usageLimit: 500,
-    usedCount: 142,
-    usageCount: 142,
-    applicableTo: "varejo",
-    isActive: true,
-  },
-  {
-    id: "cup-2",
-    code: "ATACADOFRETE",
-    discountType: "fixed",
-    discountValue: 100.00,
-    minOrderValue: 1500.00,
-    minValue: 1500.00,
-    validUntil: "31/10/2026",
-    maxUses: 100,
-    usageLimit: 100,
-    usedCount: 28,
-    usageCount: 28,
-    applicableTo: "atacado",
-    isActive: true,
-  },
-  {
-    id: "cup-3",
-    code: "FITNESS15",
-    discountType: "percentage",
-    discountValue: 15,
-    minOrderValue: 299.00,
-    minValue: 299.00,
-    validUntil: "15/11/2026",
-    maxUses: 200,
-    usageLimit: 200,
-    usedCount: 89,
-    usageCount: 89,
-    applicableTo: "todos",
-    isActive: true,
-  },
-  {
-    id: "cup-4",
-    code: "BLACKFIT",
-    discountType: "percentage",
-    discountValue: 20,
-    minOrderValue: 500.00,
-    minValue: 500.00,
-    validUntil: "30/11/2026",
-    maxUses: 1000,
-    usageLimit: 1000,
-    usedCount: 0,
-    usageCount: 0,
-    applicableTo: "todos",
-    isActive: false,
-  },
-];
-
 export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
@@ -486,7 +398,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [orders, setOrders] = useState<AdminOrder[]>(INITIAL_ADMIN_ORDERS);
   const [clients, setClients] = useState<AdminClient[]>(INITIAL_ADMIN_CLIENTS);
   const [banners, setBanners] = useState<AdminBanner[]>(INITIAL_ADMIN_BANNERS);
-  const [coupons, setCoupons] = useState<AdminCoupon[]>(INITIAL_ADMIN_COUPONS);
   const [storeConfig, setStoreConfig] = useState<StoreConfig>(STORE_CONFIG);
 
   // Carregar do localStorage na montagem e escutar atualizações
@@ -515,9 +426,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
         const savedBanners = localStorage.getItem("am_fit_admin_banners");
         if (savedBanners) setBanners(JSON.parse(savedBanners));
-
-        const savedCoupons = localStorage.getItem("am_fit_admin_coupons");
-        if (savedCoupons) setCoupons(JSON.parse(savedCoupons));
 
         const savedConfig = localStorage.getItem("am_fit_store_config");
         if (savedConfig) {
@@ -560,6 +468,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         try {
           const parsed = JSON.parse(e.newValue);
           if (Array.isArray(parsed)) setOrders(parsed);
+        } catch {}
+      }
+      if ((e.key === "am_fit_admin_clients" || e.key === "am_fit_users_db") && e.newValue) {
+        try {
+          const freshClientsRaw = localStorage.getItem("am_fit_admin_clients");
+          if (freshClientsRaw) {
+            const parsed = JSON.parse(freshClientsRaw);
+            if (Array.isArray(parsed)) setClients(parsed);
+          }
         } catch {}
       }
       if (e.key === "am_fit_store_config" && e.newValue) {
@@ -607,12 +524,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       localStorage.setItem("am_fit_admin_banners", JSON.stringify(banners));
     } catch {}
   }, [banners]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("am_fit_admin_coupons", JSON.stringify(coupons));
-    } catch {}
-  }, [coupons]);
 
   useEffect(() => {
     try {
@@ -955,32 +866,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
   };
 
-  // Cupons
-  const addCoupon = (couponData: Omit<AdminCoupon, "id" | "usedCount">) => {
-    const newC: AdminCoupon = {
-      ...couponData,
-      id: `cup-${Date.now()}`,
-      usedCount: 0,
-    };
-    setCoupons((prev) => [newC, ...prev]);
-  };
-
-  const updateCoupon = (id: string, fields: Partial<AdminCoupon>) => {
-    setCoupons((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...fields } : c))
-    );
-  };
-
-  const deleteCoupon = (id: string) => {
-    setCoupons((prev) => prev.filter((c) => c.id !== id));
-  };
-
-  const toggleCouponStatus = (id: string) => {
-    setCoupons((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, isActive: !c.isActive } : c))
-    );
-  };
-
   return (
     <AdminContext.Provider
       value={{
@@ -1008,12 +893,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteBanner,
         toggleBannerStatus,
         toggleBannerActive: (id: string) => toggleBannerStatus(id),
-        coupons,
-        addCoupon,
-        updateCoupon,
-        deleteCoupon,
-        toggleCouponStatus,
-        toggleCouponActive: (id: string) => toggleCouponStatus(id),
         storeConfig,
         updateStoreConfig,
       }}

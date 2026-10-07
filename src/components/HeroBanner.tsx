@@ -54,12 +54,15 @@ export const HeroBanner: React.FC = () => {
               {/* Background Image */}
               <div className="absolute inset-0">
                 <Image
-                  src={campaign.image}
+                  src={campaign.image || "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85"}
                   alt={campaign.title}
                   fill
                   priority={idx === 0}
                   sizes="(max-width: 768px) 100vw, (max-width: 1440px) 100vw, 1720px"
                   className="object-cover object-center filter brightness-[0.72]"
+                  onError={(e) => {
+                    (e.currentTarget as any).src = "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85";
+                  }}
                 />
                 {/* Degradê refinado: melhora contraste do texto sem pesar */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
