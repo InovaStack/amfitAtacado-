@@ -46,8 +46,8 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           </div>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+        {/* Categories Grid / Mobile Touch Scroll */}
+        <div className="flex overflow-x-auto pb-4 pt-1 gap-3 snap-x snap-mandatory sm:grid sm:grid-cols-3 lg:grid-cols-6 sm:gap-6 sm:overflow-visible sm:pb-0 scrollbar-none">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
             const liveCount = (products && products.length > 0)
@@ -66,7 +66,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
                   const el = document.getElementById("destaques");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className={`group relative rounded-2xl overflow-hidden cursor-pointer bg-am-gray-50 border-2 transition-all duration-300 hover:shadow-lg ${
+                className={`group relative rounded-2xl overflow-hidden cursor-pointer bg-am-gray-50 border-2 transition-all duration-300 hover:shadow-lg shrink-0 w-[140px] xs:w-[160px] sm:w-auto snap-start ${
                   isSelected
                     ? "border-am-magenta ring-2 ring-am-magenta/30 scale-[1.02]"
                     : "border-am-gray-200 hover:border-am-magenta"

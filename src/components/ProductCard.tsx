@@ -80,7 +80,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             e.stopPropagation();
             toggleFavorite(product.id);
           }}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md ${
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md active:scale-95 ${
             isFavorite
               ? "bg-am-magenta text-white scale-110"
               : "bg-white text-zinc-600 hover:text-am-magenta hover:bg-am-gray-50"
@@ -92,7 +92,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         <button
           onClick={handleOpenQuickView}
-          className="w-9 h-9 rounded-full bg-white text-zinc-600 hover:text-am-magenta hover:bg-am-gray-50 flex items-center justify-center transition-all shadow-md opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 duration-200"
+          className="w-9 h-9 rounded-full bg-white text-zinc-600 hover:text-am-magenta hover:bg-am-gray-50 flex items-center justify-center transition-all shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transform sm:translate-x-2 sm:group-hover:translate-x-0 duration-200 active:scale-95"
           aria-label="Espiar produto"
         >
           <Eye size={16} />
@@ -164,7 +164,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
 
           {/* Color swatches */}
-          <div className="flex items-center gap-1.5 mb-2.5">
+          <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
             {(product.colors || []).map((color: any) => {
               const cName = typeof color === "string" ? color : color.name;
               const cHex = typeof color === "string" ? "#000000" : (color.hex || "#000000");
@@ -175,7 +175,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   type="button"
                   onClick={() => setSelectedColor(cName)}
                   title={cName}
-                  className={`w-4 h-4 rounded-full border transition-all ${
+                  className={`w-5 h-5 sm:w-4 sm:h-4 rounded-full border transition-all ${
                     selectedColor === cName
                       ? "ring-2 ring-am-magenta ring-offset-1 scale-110"
                       : "border-zinc-300 hover:scale-105"
@@ -191,14 +191,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Size picker */}
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[11px] text-zinc-400 mr-0.5 font-medium">Tam:</span>
               {(product.sizes || []).map((size) => (
                 <button
                   key={size}
                   type="button"
                   onClick={() => setSelectedSize(size)}
-                  className={`text-xs px-2 py-0.5 rounded font-bold transition-all border ${
+                  className={`min-w-[28px] h-7 sm:min-w-[24px] sm:h-6 px-2 flex items-center justify-center rounded font-bold text-xs transition-all border ${
                     selectedSize === size
                       ? "bg-am-black text-white border-am-black"
                       : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400"

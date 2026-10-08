@@ -7,6 +7,7 @@ import { QuickViewModal } from "@/components/QuickViewModal";
 import { AdminProvider } from "@/context/AdminContext";
 import { AuthModal } from "@/components/AuthModal";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 export const metadata: Metadata = {
   title: "AM FIT - Moda Fitness Atacado & Varejo | Direto da Fábrica",
@@ -34,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
-      <body className="min-h-screen bg-white text-zinc-900 antialiased selection:bg-am-magenta selection:text-white">
+      <body className="min-h-screen bg-white text-zinc-900 antialiased selection:bg-am-magenta selection:text-white pb-16 lg:pb-0">
         <AdminProvider>
           <AuthProvider>
             <CartProvider>
@@ -43,6 +44,7 @@ export default function RootLayout({
               <QuickViewModal />
               <AuthModal />
               <FloatingWhatsApp />
+              <MobileBottomNav />
             </CartProvider>
           </AuthProvider>
         </AdminProvider>

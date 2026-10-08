@@ -713,6 +713,43 @@ export const ProductDetailClient: React.FC<ProductDetailClientProps> = ({
           </div>
         </div>
       )}
+
+      {/* Barra de Compra Rápida Fixa no Mobile */}
+      <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-zinc-200 p-3 shadow-2xl flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-am-magenta">
+              {mode === "atacado" ? "Atacado" : "Varejo"}
+            </span>
+            <span className="text-[10px] text-zinc-400">• {selectedSize} / {selectedColor}</span>
+          </div>
+          <div className="text-base font-black text-am-black truncate">
+            R$ {currentPrice.toFixed(2).replace(".", ",")}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className={`h-11 px-5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 shrink-0 ${
+            addedSuccess
+              ? "bg-emerald-600 text-white"
+              : "bg-am-black text-white hover:bg-zinc-800"
+          }`}
+        >
+          {addedSuccess ? (
+            <>
+              <CheckCircle2 size={16} />
+              <span>Adicionado!</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={16} className="text-am-magenta" />
+              <span>Comprar</span>
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 };
