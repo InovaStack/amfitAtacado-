@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { 
   Building2, 
@@ -9,9 +9,8 @@ import {
   ArrowRight, 
   DollarSign, 
   Package, 
-  Sparkles,
-  PhoneCall,
-  Calculator
+  Sparkles, 
+  PhoneCall 
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -22,11 +21,6 @@ export const WholesaleCTA: React.FC = () => {
   const { setMode } = useCart();
   const { openAuthModal, isAuthenticated, user } = useAuth();
   const { storeConfig } = useAdmin();
-  const [investment, setInvestment] = useState(300);
-
-  // Profit calculation: markup oficial de 100% de lucro
-  const estimatedReturn = Math.round(investment * 2.0);
-  const estimatedProfit = estimatedReturn - investment;
 
   return (
     <section id="atacado" className="py-20 bg-white border-y border-am-gray-200 relative overflow-hidden">
@@ -139,72 +133,75 @@ export const WholesaleCTA: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Interactive Profit Calculator */}
+          {/* Right Column: Wholesale Conditions & Benefits Card */}
           <div className="lg:col-span-5">
-            <div className="bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-800 relative">
+            <div className="bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-800 relative space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-lg bg-am-magenta/20 text-am-magenta flex items-center justify-center">
-                    <Calculator size={18} />
+                  <div className="w-10 h-10 rounded-xl bg-am-magenta/20 text-am-magenta flex items-center justify-center">
+                    <Building2 size={20} />
                   </div>
                   <div>
-                    <h3 className="font-black text-base uppercase tracking-wide">Simulador de Lucro</h3>
-                    <p className="text-[11px] text-zinc-400">Previsão estimada para revenda</p>
+                    <h3 className="font-black text-base uppercase tracking-wide">Condições do Atacado</h3>
+                    <p className="text-[11px] text-zinc-400">Vantagens exclusivas para revendedores</p>
                   </div>
                 </div>
-                <span className="text-xs font-bold bg-am-magenta/20 text-am-magenta px-2.5 py-1 rounded-full border border-am-magenta/30">
-                  ✨ 100% de Lucro
+                <span className="text-xs font-bold bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20">
+                  Pronta Entrega
                 </span>
               </div>
 
-              {/* Slider for investment */}
-              <div className="py-6 space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">Seu investimento inicial:</span>
-                  <span className="text-lg font-black text-white">
-                    R$ {investment.toLocaleString("pt-BR")},00
-                  </span>
+              {/* Conditions List */}
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">💰</span>
+                    <div>
+                      <div className="text-xs font-bold text-white">Pedido Mínimo Acessível</div>
+                      <div className="text-[11px] text-zinc-400">Comece com pouco capital inicial</div>
+                    </div>
+                  </div>
+                  <span className="text-sm font-black text-am-magenta">R$ {storeConfig.commercial.minWholesaleOrderAmount},00</span>
                 </div>
 
-                <input
-                  type="range"
-                  min="300"
-                  max="5000"
-                  step="100"
-                  value={investment}
-                  onChange={(e) => setInvestment(Number(e.target.value))}
-                  className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-am-magenta"
-                />
-
-                <div className="flex justify-between text-[11px] text-zinc-500">
-                  <span>Mínimo: R$ 300</span>
-                  <span>R$ 2.500</span>
-                  <span>R$ 5.000+</span>
-                </div>
-              </div>
-
-              {/* Calculation Output Cards */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="bg-zinc-900/90 rounded-2xl p-4 border border-zinc-800">
-                  <span className="text-xs text-zinc-400 block mb-1">Você revende por:</span>
-                  <span className="text-xl sm:text-2xl font-black text-white">
-                    R$ {estimatedReturn.toLocaleString("pt-BR")},00
-                  </span>
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📦</span>
+                    <div>
+                      <div className="text-xs font-bold text-white">Grade Livre & Sortida</div>
+                      <div className="text-[11px] text-zinc-400">Escolha modelos, tamanhos e cores à vontade</div>
+                    </div>
+                  </div>
+                  <span className="text-xs font-extrabold text-emerald-400">Sem grade presa</span>
                 </div>
 
-                <div className="bg-am-magenta/10 rounded-2xl p-4 border border-am-magenta/30">
-                  <span className="text-xs text-am-magenta font-semibold block mb-1">Seu Lucro Líquido (100%):</span>
-                  <span className="text-xl sm:text-2xl font-black text-am-magenta">
-                    R$ {estimatedProfit.toLocaleString("pt-BR")},00
-                  </span>
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⚡</span>
+                    <div>
+                      <div className="text-xs font-bold text-white">Despacho Rápido</div>
+                      <div className="text-[11px] text-zinc-400">Envio para transportadoras e Correios</div>
+                    </div>
+                  </div>
+                  <span className="text-xs font-extrabold text-zinc-300">Todo o Brasil</span>
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📸</span>
+                    <div>
+                      <div className="text-xs font-bold text-white">Material de Apoio Grátis</div>
+                      <div className="text-[11px] text-zinc-400">Fotos e vídeos em alta resolução para divulgação</div>
+                    </div>
+                  </div>
+                  <span className="text-xs font-extrabold text-am-magenta">Incluso</span>
                 </div>
               </div>
 
               {/* Fast note */}
-              <div className="mt-6 pt-4 border-t border-zinc-800/80 text-center">
+              <div className="pt-2 text-center">
                 <p className="text-xs text-zinc-400">
-                  Baseado no preço sugerido de revenda no varejo. 
-                  Você tem autonomia total para precificar suas peças!
+                  Cadastre-se como revendedor ou compre direto pela grade de atacado com CNPJ ou CPF.
                 </p>
               </div>
             </div>
