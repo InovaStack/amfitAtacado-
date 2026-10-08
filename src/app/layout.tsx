@@ -6,7 +6,6 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
 import { AdminProvider } from "@/context/AdminContext";
 import { AuthModal } from "@/components/AuthModal";
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 export const metadata: Metadata = {
@@ -43,7 +42,6 @@ export default function RootLayout({
               <CartDrawer />
               <QuickViewModal />
               <AuthModal />
-              <FloatingWhatsApp />
               <MobileBottomNav />
             </CartProvider>
           </AuthProvider>

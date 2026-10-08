@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { useAuth, Address } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/config/store";
@@ -952,7 +951,6 @@ export default function AccountPage() {
       </main>
 
       <Footer />
-      <FloatingWhatsApp />
     </div>
   );
 }
