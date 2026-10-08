@@ -15,12 +15,14 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useAdmin } from "@/context/AdminContext";
 import { getWhatsAppLink } from "@/config/store";
 
 export const WholesaleCTA: React.FC = () => {
   const { setMode } = useCart();
   const { openAuthModal, isAuthenticated, user } = useAuth();
-  const [investment, setInvestment] = useState(600);
+  const { storeConfig } = useAdmin();
+  const [investment, setInvestment] = useState(300);
 
   // Profit calculation: markup oficial de 100% de lucro
   const estimatedReturn = Math.round(investment * 2.0);
@@ -118,15 +120,22 @@ export const WholesaleCTA: React.FC = () => {
                 <span>Ver Catálogo Tradicional</span>
               </button>
 
-              <a
-                href={getWhatsAppLink("Olá, quero receber a tabela de atacado da AM FIT")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-4 bg-am-black hover:bg-zinc-800 text-white rounded-full font-bold text-sm tracking-wider transition-all flex items-center gap-2"
-              >
-                <PhoneCall size={16} className="text-am-magenta" />
-                <span>Falar com Consultor</span>
-              </a>
+              {storeConfig.channelsStatus?.whatsappActive !== false ? (
+                <a
+                  href={getWhatsAppLink("Olá, quero receber a tabela de atacado da AM FIT", storeConfig.contact.whatsappNumber)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-4 bg-am-black hover:bg-zinc-800 text-white rounded-full font-bold text-sm tracking-wider transition-all flex items-center gap-2"
+                >
+                  <PhoneCall size={16} className="text-am-magenta" />
+                  <span>Falar com Consultor</span>
+                </a>
+              ) : (
+                <div className="px-6 py-4 bg-zinc-200 text-zinc-500 rounded-full font-bold text-sm tracking-wider opacity-60 flex items-center gap-2 cursor-not-allowed">
+                  <PhoneCall size={16} />
+                  <span>WhatsApp Pausado</span>
+                </div>
+              )}
             </div>
           </div>
 

@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Instagram, Heart, MessageCircle, ExternalLink } from "lucide-react";
+import { useAdmin } from "@/context/AdminContext";
 
 const INSTAGRAM_POSTS = [
   {
@@ -50,8 +51,15 @@ const INSTAGRAM_POSTS = [
 ];
 
 export const InstagramFeed: React.FC = () => {
+  const { storeConfig } = useAdmin();
+  const instagramUrl = storeConfig.social?.instagramUrl || "https://instagram.com/amfit.oficial";
+  const instagramHandle = storeConfig.social?.instagram || "@amfit.oficial";
+  const isInstagramActive = storeConfig.channelsStatus?.instagramActive !== false;
+
+  if (!isInstagramActive) return null;
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white border-t border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         
         {/* Header */}
@@ -61,14 +69,14 @@ export const InstagramFeed: React.FC = () => {
             Redes Sociais
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-am-black tracking-tight uppercase">
-            SIGA <span className="text-am-magenta">@AMFITATACADO</span> NO INSTAGRAM
+            SIGA <span className="text-am-magenta">{instagramHandle.toUpperCase()}</span> NO INSTAGRAM
           </h2>
           <p className="text-sm text-zinc-500 mt-2">
             Marque <strong>#AMFitBrasil</strong> nas suas fotos e faça parte da nossa comunidade fitness!
           </p>
           <div className="mt-4">
             <a
-              href="https://instagram.com"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-am-black hover:bg-am-magenta text-white rounded-full text-xs font-bold tracking-wider transition-colors shadow-sm"
@@ -85,7 +93,7 @@ export const InstagramFeed: React.FC = () => {
           {INSTAGRAM_POSTS.map((post) => (
             <a
               key={post.id}
-              href="https://instagram.com"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-100 shadow-xs block"

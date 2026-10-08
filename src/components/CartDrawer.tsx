@@ -48,7 +48,7 @@ export const CartDrawer: React.FC = () => {
     wholesaleMinTarget,
   } = useCart();
   const { addOrder, storeConfig } = useAdmin();
-  const { user } = useAuth();
+  const { user, addOrderFromCart } = useAuth();
 
   // Delivery Form State
   const [delivery, setDelivery] = useState<DeliveryInfo>({
@@ -236,7 +236,42 @@ export const CartDrawer: React.FC = () => {
       items: orderItems,
     });
 
+    // Se houver usuário logado, salvar pedido na conta dele no AuthContext
+    if (user && addOrderFromCart) {
+      try {
+        const cityParts = delivery.city.split("-");
+        const deliveryAddress = {
+          id: `addr-${Date.now()}`,
+          label: mode === "atacado" ? "Loja / Empresa" : "Residencial",
+          recipientName: delivery.recipientName.trim(),
+          street: delivery.address.trim(),
+          number: "S/N",
+          neighborhood: "Bairro",
+          city: cityParts[0]?.trim() || delivery.city.trim(),
+          state: cityParts[1]?.trim() || "SP",
+          zipCode: delivery.cep.trim(),
+          isDefault: true,
+        };
+
+        addOrderFromCart(
+          items,
+          mode,
+          0,
+          "pix",
+          deliveryAddress,
+          delivery.notes ? `WhatsApp: ${delivery.phone.trim()} | Obs: ${delivery.notes.trim()}` : `WhatsApp: ${delivery.phone.trim()}`
+        );
+      } catch {
+        // ignore
+      }
+    }
+
+    // Abrir WhatsApp com a mensagem do pedido
     window.open(getWhatsAppLink(message, storeConfig.contact.whatsappNumber), "_blank");
+
+    // Limpar o carrinho e fechar gaveta para evitar duplicidade
+    clearCart();
+    setIsCartOpen(false);
   };
 
   return (

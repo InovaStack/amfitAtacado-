@@ -83,6 +83,19 @@ export default function GradeAtacadoPage() {
     return list;
   }, [products, activeCollection]);
 
+  // Helper seguro para chave de produto/cor/tamanho
+  const makeGradeKey = (productId: string, colorName: string, size: string) =>
+    `${productId}:::${colorName}:::${size}`;
+
+  const parseGradeKey = (key: string) => {
+    const parts = key.split(":::");
+    return {
+      productId: parts[0] || "",
+      colorName: parts[1] || "",
+      size: parts[2] || "",
+    };
+  };
+
   // Helper to get selected color for a product (defaults to first color)
   const getSelectedColor = (prod: Product) => {
     return selectedColorPerProduct[prod.id] || prod.colors[0]?.name || "Padrão";
@@ -98,13 +111,13 @@ export default function GradeAtacadoPage() {
 
   // Helper to get quantity for a specific size of the current selected color
   const getQty = (productId: string, colorName: string, size: string) => {
-    const key = `${productId}-${colorName}-${size}`;
+    const key = makeGradeKey(productId, colorName, size);
     return quantities[key] || 0;
   };
 
   // Update quantity with validation
   const updateQty = (productId: string, colorName: string, size: string, delta: number) => {
-    const key = `${productId}-${colorName}-${size}`;
+    const key = makeGradeKey(productId, colorName, size);
     const current = quantities[key] || 0;
     const next = Math.max(0, current + delta);
     setQuantities((prev) => ({
@@ -114,7 +127,7 @@ export default function GradeAtacadoPage() {
   };
 
   const setDirectQty = (productId: string, colorName: string, size: string, val: number) => {
-    const key = `${productId}-${colorName}-${size}`;
+    const key = makeGradeKey(productId, colorName, size);
     const next = Math.max(0, isNaN(val) ? 0 : val);
     setQuantities((prev) => ({
       ...prev,
@@ -127,7 +140,7 @@ export default function GradeAtacadoPage() {
     setQuantities((prev) => {
       const copy = { ...prev };
       prod.sizes.forEach((sz) => {
-        const key = `${prod.id}-${colorName}-${sz}`;
+        const key = makeGradeKey(prod.id, colorName, sz);
         copy[key] = (copy[key] || 0) + qtyEach;
       });
       return copy;
@@ -137,25 +150,25 @@ export default function GradeAtacadoPage() {
   // Calculate totals for a specific product across all sizes and colors
   const getProductGridSummary = (prod: Product) => {
     let totalPieces = 0;
+    const prefix = `${prod.id}:::`;
     Object.keys(quantities).forEach((k) => {
-      if (k.startsWith(`${prod.id}-`)) {
+      if (k.startsWith(prefix)) {
         totalPieces += quantities[k] || 0;
       }
     });
-    const subtotal = totalPieces * prod.wholesalePrice;
+    const unitPrice = Number(prod.wholesalePrice ?? (prod as any).priceWholesale ?? 0);
+    const subtotal = totalPieces * unitPrice;
     return { totalPieces, subtotal };
   };
 
   // Add all selected items of a specific product to cart
   const handleAddProductGradeToCart = (prod: Product) => {
     const itemsToAdd: { product: Product; size: string; color: string; quantity: number }[] = [];
+    const prefix = `${prod.id}:::`;
 
     Object.keys(quantities).forEach((k) => {
-      if (k.startsWith(`${prod.id}-`) && quantities[k] > 0) {
-        // format: `${productId}-${colorName}-${size}`
-        const parts = k.split("-");
-        const size = parts[parts.length - 1];
-        const colorName = parts.slice(1, parts.length - 1).join("-");
+      if (k.startsWith(prefix) && quantities[k] > 0) {
+        const { colorName, size } = parseGradeKey(k);
         itemsToAdd.push({
           product: prod,
           size,
@@ -176,7 +189,7 @@ export default function GradeAtacadoPage() {
     setQuantities((prev) => {
       const copy = { ...prev };
       Object.keys(copy).forEach((k) => {
-        if (k.startsWith(`${prod.id}-`)) {
+        if (k.startsWith(prefix)) {
           delete copy[k];
         }
       });
@@ -192,33 +205,31 @@ export default function GradeAtacadoPage() {
   const grandTotalSummary = useMemo(() => {
     let pieces = 0;
     let value = 0;
+    const allList: Product[] = (products && products.length > 0 ? products : PRODUCTS) as Product[];
 
     Object.entries(quantities).forEach(([key, qty]) => {
       if (qty > 0) {
-        const prodId = key.split("-")[0];
-        const prod = PRODUCTS.find((p) => p.id === prodId);
+        const { productId } = parseGradeKey(key);
+        const prod = allList.find((p) => p.id === productId);
         if (prod) {
           pieces += qty;
-          value += qty * prod.wholesalePrice;
+          const unitPrice = Number(prod.wholesalePrice ?? (prod as any).priceWholesale ?? 0);
+          value += qty * unitPrice;
         }
       }
     });
 
     return { pieces, value };
-  }, [quantities]);
+  }, [quantities, products]);
 
   const handleAddAllToCart = () => {
     const itemsToAdd: { product: Product; size: string; color: string; quantity: number }[] = [];
-
     const allList: Product[] = (products && products.length > 0 ? products : PRODUCTS) as Product[];
 
     Object.entries(quantities).forEach(([key, qty]) => {
       if (qty > 0) {
-        const parts = key.split("-");
-        const prodId = parts[0];
-        const size = parts[parts.length - 1];
-        const colorName = parts.slice(1, parts.length - 1).join("-");
-        const prod = allList.find((p) => p.id === prodId);
+        const { productId, colorName, size } = parseGradeKey(key);
+        const prod = allList.find((p) => p.id === productId);
         if (prod) {
           itemsToAdd.push({
             product: prod,

@@ -34,7 +34,7 @@ export const FloatingWhatsApp: React.FC = () => {
 
       {/* Floating Button */}
       <a
-        href={getWhatsAppLink("Olá! Gostaria de tirar dúvidas sobre as peças da AM FIT.")}
+        href={getWhatsAppLink("Olá! Gostaria de tirar dúvidas sobre as peças da AM FIT.", storeConfig.contact.whatsappNumber)}
         target="_blank"
         rel="noopener noreferrer"
         className="w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 group relative"

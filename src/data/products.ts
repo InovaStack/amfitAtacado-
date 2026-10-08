@@ -483,8 +483,8 @@ export const PRODUCTS: Product[] = [
     originalPrice: 109.90,
     discountPercentage: 18,
     images: [
-      "https://images.unsplash.com/photo-1503944543280-76d323c319e3?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?auto=format&fit=crop&w=800&q=80",
     ],
     sizes: ["06", "08", "10", "12", "14"],
     colors: [

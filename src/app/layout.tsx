@@ -6,6 +6,7 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
 import { AdminProvider } from "@/context/AdminContext";
 import { AuthModal } from "@/components/AuthModal";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
 export const metadata: Metadata = {
   title: "AM FIT - Moda Fitness Atacado & Varejo | Direto da Fábrica",
@@ -41,6 +42,7 @@ export default function RootLayout({
               <CartDrawer />
               <QuickViewModal />
               <AuthModal />
+              <FloatingWhatsApp />
             </CartProvider>
           </AuthProvider>
         </AdminProvider>

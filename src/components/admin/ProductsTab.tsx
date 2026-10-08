@@ -807,7 +807,7 @@ export const ProductsTab: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-zinc-600 mb-1">Preço "De" (R$)</label>
+                    <label className="block text-[11px] font-bold text-zinc-600 mb-1">Preço &quot;De&quot; (R$)</label>
                     <input
                       type="number"
                       step="0.01"

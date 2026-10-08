@@ -73,7 +73,7 @@ export const STORE_CONFIG: StoreConfig = {
   },
 
   commercial: {
-    minWholesaleOrderAmount: 600,
+    minWholesaleOrderAmount: 300,
     minWholesalePieces: 6,
     freeShippingRetailThreshold: 299,
     maxInstallments: 6,

@@ -85,23 +85,23 @@ export const BannersTab: React.FC = () => {
           >
             <div className="relative h-44 w-full bg-zinc-100 overflow-hidden">
               <img
-                src={b.imageUrl}
+                src={b.imageUrl || b.image || "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80"}
                 alt={b.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute top-3 left-3 flex gap-2">
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/70 backdrop-blur-md text-white border border-white/10">
-                  {b.category}
+                  {b.category || b.type || "principal"}
                 </span>
                 <button
                   onClick={() => toggleBannerActive(b.id)}
                   className={`px-2.5 py-1 rounded-full text-[10px] font-bold shadow-xs ${
-                    b.active
+                    (b.active ?? b.isActive ?? true)
                       ? "bg-emerald-500 text-white"
                       : "bg-white/90 text-zinc-600 border border-zinc-200"
                   }`}
                 >
-                  {b.active ? "Ativo" : "Inativo"}
+                  {(b.active ?? b.isActive ?? true) ? "Ativo" : "Inativo"}
                 </button>
               </div>
             </div>

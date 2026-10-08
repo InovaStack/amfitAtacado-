@@ -5,6 +5,9 @@ import { Navbar } from "@/components/Navbar";
 import { HeroBanner } from "@/components/HeroBanner";
 import { CategoriesSection } from "@/components/CategoriesSection";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
+import { WholesaleCTA } from "@/components/WholesaleCTA";
+import { RetailCTA } from "@/components/RetailCTA";
+import { InstagramFeed } from "@/components/InstagramFeed";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { useAdmin } from "@/context/AdminContext";
@@ -49,10 +52,19 @@ export default function Home() {
         onClearSearch={() => setSearchFilter("")}
       />
 
-      {/* 5. FAQ e Atendimento */}
+      {/* 5. Bloco Oficial de Atacado & Lucro 100% (Âncora #atacado) */}
+      <WholesaleCTA />
+
+      {/* 6. Benefícios de Compra no Varejo */}
+      <RetailCTA />
+
+      {/* 7. Comunidade & Instagram */}
+      <InstagramFeed />
+
+      {/* 8. FAQ e Atendimento */}
       <ContactSection />
 
-      {/* 7. Rodapé */}
+      {/* 9. Rodapé */}
       <Footer />
     </main>
   );
