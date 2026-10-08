@@ -237,11 +237,20 @@ function CatalogContent() {
             
             {/* Mobile Filter Trigger */}
             <button
-              onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-              className="lg:hidden px-3.5 py-2 rounded-xl border border-am-gray-300 bg-am-gray-50 text-xs font-bold text-zinc-700 flex items-center gap-1.5"
+              onClick={() => setMobileFilterOpen(true)}
+              className={`lg:hidden px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 ${
+                hasActiveFilters
+                  ? "bg-am-magenta text-white border-am-magenta shadow-magenta-sm"
+                  : "bg-am-gray-50 text-zinc-700 border-am-gray-300 hover:bg-am-gray-100"
+              }`}
             >
-              <Filter size={14} className="text-am-magenta" />
+              <Filter size={14} className={hasActiveFilters ? "text-white" : "text-am-magenta"} />
               <span>Filtros</span>
+              {hasActiveFilters && (
+                <span className="w-4 h-4 rounded-full bg-white text-am-magenta text-[10px] font-black flex items-center justify-center">
+                  {(selectedCategory !== "todos" ? 1 : 0) + (selectedDepartment !== "todos" ? 1 : 0) + (selectedSize ? 1 : 0) + (searchQuery ? 1 : 0)}
+                </span>
+              )}
             </button>
 
             {/* Sort Select */}
@@ -561,122 +570,167 @@ function CatalogContent() {
         </div>
       </div>
 
-      {/* Mobile Filter Modal / Drawer */}
+      {/* Mobile Filter Bottom Sheet Drawer (lg:hidden) */}
       {mobileFilterOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end">
+          {/* Backdrop */}
           <div
             onClick={() => setMobileFilterOpen(false)}
             className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-xs bg-white shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-am-gray-200">
-                  <h3 className="font-black text-sm uppercase tracking-wider text-am-black flex items-center gap-2">
-                    <SlidersHorizontal size={16} className="text-am-magenta" />
-                    Filtrar Catálogo
-                  </h3>
-                  <button
-                    onClick={() => setMobileFilterOpen(false)}
-                    className="p-1 rounded-full text-zinc-500 hover:text-am-black"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
+          {/* Bottom Sheet Modal */}
+          <div className="relative z-10 w-full max-h-[85vh] bg-white rounded-t-3xl shadow-2xl flex flex-col overflow-hidden">
+            {/* Grab Handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <span className="w-12 h-1.5 rounded-full bg-zinc-300" />
+            </div>
 
-                {/* Department */}
-                <div>
-                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-2">
-                    Departamento
-                  </label>
-                  <div className="space-y-1.5">
-                    {["todos", "Feminino", "Masculino", "Infantil"].map((dep) => (
+            {/* Header */}
+            <div className="px-5 py-3 border-b border-am-gray-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal size={18} className="text-am-magenta" />
+                <h3 className="font-black text-base uppercase tracking-tight text-am-black">
+                  Filtrar Catálogo
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-xs font-bold text-am-magenta px-2 py-1 rounded hover:bg-am-magenta-light transition-colors"
+                  >
+                    Redefinir
+                  </button>
+                )}
+                <button
+                  onClick={() => setMobileFilterOpen(false)}
+                  className="p-1.5 rounded-full text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 transition-colors"
+                  aria-label="Fechar filtros"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Filters Content */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
+              
+              {/* Department */}
+              <div>
+                <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-2.5">
+                  Departamento
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["todos", "Feminino", "Masculino", "Infantil"].map((dep) => {
+                    const isSelected =
+                      (dep === "todos" && selectedDepartment === "todos") ||
+                      selectedDepartment.toLowerCase() === dep.toLowerCase();
+
+                    return (
                       <button
                         key={dep}
                         onClick={() => setSelectedDepartment(dep === "todos" ? "todos" : dep)}
-                        className={`w-full px-3 py-2 rounded-xl text-xs font-semibold text-left flex items-center justify-between ${
-                          (dep === "todos" && selectedDepartment === "todos") ||
-                          selectedDepartment.toLowerCase() === dep.toLowerCase()
-                            ? "bg-am-magenta-light text-am-magenta font-bold border border-am-magenta-border"
-                            : "text-zinc-600 hover:bg-am-gray-50"
+                        className={`px-3 py-2.5 rounded-xl text-xs font-bold text-left flex items-center justify-between border transition-all active:scale-95 ${
+                          isSelected
+                            ? "bg-am-magenta-light text-am-magenta border-am-magenta-border ring-1 ring-am-magenta"
+                            : "bg-am-gray-50 text-zinc-700 border-am-gray-200 hover:bg-white"
                         }`}
                       >
                         <span className="capitalize">{dep === "todos" ? "Todos os Departamentos" : dep}</span>
-                        {((dep === "todos" && selectedDepartment === "todos") ||
-                          selectedDepartment.toLowerCase() === dep.toLowerCase()) && (
-                          <Check size={14} />
-                        )}
+                        {isSelected && <Check size={14} className="text-am-magenta" />}
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
+              </div>
 
-                {/* Categories */}
-                <div>
-                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-2">
+              {/* Categories */}
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <label className="text-xs font-black text-zinc-800 uppercase tracking-wider">
                     Categorias
                   </label>
-                  <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
-                    {CATALOG_CATEGORIES.map((cat) => (
+                  <span className="text-[11px] text-zinc-400">{CATALOG_CATEGORIES.length} coleções</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                  {CATALOG_CATEGORIES.map((cat) => {
+                    const isSelected = selectedCategory === cat.id;
+                    return (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`w-full px-2.5 py-1.5 rounded-lg text-xs text-left flex items-center justify-between ${
-                          selectedCategory === cat.id
-                            ? "bg-am-black text-white font-bold"
-                            : "text-zinc-700 hover:bg-am-gray-100"
+                        className={`px-3 py-2 rounded-xl text-xs text-left flex items-center justify-between border transition-all active:scale-95 ${
+                          isSelected
+                            ? "bg-am-black text-white font-bold border-am-black shadow-xs"
+                            : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
                         }`}
                       >
-                        <span>{cat.name}</span>
-                        <span className="text-[10px] opacity-75">({cat.count})</span>
+                        <span className="truncate pr-1">{cat.name}</span>
+                        <span className={`text-[10px] shrink-0 font-bold ${isSelected ? "text-am-magenta" : "text-zinc-400"}`}>
+                          {cat.count}
+                        </span>
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
+              </div>
 
-                {/* Sizes Filter */}
-                <div>
-                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-2">
-                    Tamanho
-                  </label>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {["P", "M", "G", "GG", "XG", "06", "08", "10", "12", "14"].map((size) => (
+              {/* Sizes Filter */}
+              <div>
+                <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-2.5">
+                  Grade de Tamanhos
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {["P", "M", "G", "GG", "XG", "06", "08", "10", "12", "14"].map((size) => {
+                    const isSelected = selectedSize === size;
+                    return (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(selectedSize === size ? "" : size)}
-                        className={`py-1.5 text-xs font-bold rounded-xl border transition-all ${
-                          selectedSize === size
-                            ? "bg-am-black text-white border-am-black"
-                            : "bg-white text-zinc-700 border-zinc-200"
+                        onClick={() => setSelectedSize(isSelected ? "" : size)}
+                        className={`h-10 text-xs font-bold rounded-xl border flex items-center justify-center transition-all active:scale-95 ${
+                          isSelected
+                            ? "bg-am-black text-white border-am-black shadow-xs ring-2 ring-am-black/20"
+                            : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400"
                         }`}
                       >
                         {size}
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Bottom Apply Button */}
-              <div className="pt-6 border-t border-am-gray-200 space-y-2">
+              {/* Wholesale banner reminder in sheet */}
+              <div className="p-3.5 rounded-2xl bg-zinc-900 text-white flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase text-am-magenta">Modo B2B Fábrica</div>
+                  <div className="text-xs font-bold truncate">Compre no Atacado (Mín. R$ 300)</div>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setMobileFilterOpen(false)}
-                  className="w-full py-3 bg-am-magenta hover:bg-am-magenta-dark text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md"
+                  onClick={() => setMode(mode === "atacado" ? "varejo" : "atacado")}
+                  className={`text-[11px] font-black uppercase px-3 py-1.5 rounded-lg shrink-0 transition-colors ${
+                    mode === "atacado"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-am-magenta text-white"
+                  }`}
                 >
-                  Ver Resultados ({filteredProducts.length})
+                  {mode === "atacado" ? "Ativado" : "Ativar"}
                 </button>
-                {hasActiveFilters && (
-                  <button
-                    type="button"
-                    onClick={clearAllFilters}
-                    className="w-full py-2 text-xs font-bold text-zinc-500 hover:text-am-magenta"
-                  >
-                    Limpar Filtros
-                  </button>
-                )}
               </div>
+
+            </div>
+
+            {/* Bottom Actions Bar (Sticky in Sheet) */}
+            <div className="p-4 border-t border-am-gray-200 bg-white shadow-lg space-y-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              <button
+                type="button"
+                onClick={() => setMobileFilterOpen(false)}
+                className="w-full h-12 bg-am-magenta hover:bg-am-magenta-dark active:scale-95 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-magenta flex items-center justify-center gap-2 transition-all"
+              >
+                <span>Ver {filteredProducts.length} Peças Encontradas</span>
+              </button>
             </div>
           </div>
         </div>
