@@ -1,0 +1,239 @@
+================================================================================
+                    RELATÓRIO TÉCNICO E FUNCIONAL COMPLETO
+                       SISTEMA AM FIT - ATACADO & VAREJO
+================================================================================
+Data de Emissão: 09/10/2026
+Versão da Plataforma: 1.0.0
+Stack Tecnológica: Next.js 14 (App Router), React 18, TypeScript 5, Tailwind CSS 3
+Repositório: https://github.com/InovaStack/amfitAtacado-.git
+Ambiente de Execução: Node.js / Vercel / Servidor Dedicado
+
+================================================================================
+1. VISÃO GERAL DO SISTEMA
+================================================================================
+O AM FIT é uma plataforma moderna de e-commerce e catálogo digital híbrido (B2B 
+para revendedores/lojistas no atacado e B2C para o consumidor final no varejo), 
+especializada em moda fitness feminina premium com confecção própria.
+
+O grande diferencial do sistema é sua flexibilidade de tabelas de preço ativas,
+permitindo alternar instantaneamente entre o modelo de Varejo (peças avulsas sem 
+pedido mínimo) e Atacado (preço direto de fábrica, margem de até 100% para 
+revenda e grade de compras rápida com matriz de cores e tamanhos).
+
+Além da loja voltada ao cliente, o sistema inclui um Painel Administrativo 
+completo embutido para gestão de produtos, estoque, clientes, pedidos e canais 
+de atendimento.
+
+================================================================================
+2. ARQUITETURA E ESTRUTURA DE DIRETÓRIOS
+================================================================================
+O projeto segue o padrão App Router do Next.js 14, organizado modularmente:
+
+src/
+├── app/                           # Rotas e páginas da aplicação
+│   ├── layout.tsx                 # Layout raiz com providers globais e barra móvel
+│   ├── globals.css                # Estilos globais e utilitários Tailwind
+│   ├── page.tsx                   # Página Inicial (Home)
+│   ├── catalogo/
+│   │   └── page.tsx               # Catálogo completo com filtros avançados
+│   ├── conta/
+│   │   └── page.tsx               # Área do Cliente (pedidos, dados, perfil)
+│   ├── lista-atacado/
+│   │   └── page.tsx               # Grade de compras rápida B2B por matriz
+│   ├── produto/
+│   │   └── [slug]/page.tsx        # Página de Detalhes do Produto
+│   └── admin/
+│       └── page.tsx               # Painel Administrativo da Loja
+│
+├── components/                    # Componentes modulares reutilizáveis
+│   ├── Navbar.tsx                 # Menu superior mobile-first com busca integrada
+│   ├── MobileBottomNav.tsx        # Barra fixa inferior mobile estilo app
+│   ├── HeroBanner.tsx             # Banner principal rotativo/promocional
+│   ├── CategoriesSection.tsx      # Seção de departamentos e categorias
+│   ├── FeaturedProducts.tsx       # Vitrine de produtos em destaque
+│   ├── PromoSection.tsx           # Oferta do Dia expansível sob clique
+│   ├── RetailCTA.tsx              # Banner de benefícios de compra no varejo
+│   ├── ContactSection.tsx         # Canais oficiais e políticas da confecção
+│   ├── Footer.tsx                 # Rodapé institucional otimizado para mobile
+│   ├── ProductCard.tsx            # Card de produto com badge, preços e ações
+│   ├── CartDrawer.tsx             # Carrinho lateral com checkout via WhatsApp
+│   ├── AuthModal.tsx              # Modal de login/cadastro (Varejo e Atacado)
+│   ├── QuickViewModal.tsx         # Modal de visualização rápida do produto
+│   ├── ProductPageWrapper.tsx     # Wrapper para páginas de produto dinâmicas
+│   └── admin/                     # Componentes internos do Painel Admin
+│       ├── AdminLogin.tsx         # Tela de autenticação administrativa
+│       ├── AdminSidebar.tsx       # Navegação lateral do painel admin
+│       ├── DashboardTab.tsx       # Métricas de vendas, ticket médio e pedidos
+│       ├── ProductsTab.tsx        # CRUD de produtos, estoque e variações
+│       ├── OrdersTab.tsx          # Gestão de pedidos recebidos
+│       ├── ClientsTab.tsx         # Gestão e aprovação de clientes atacado
+│       ├── BannersTab.tsx         # Gestão de banners da loja
+│       └── SettingsTab.tsx        # Configurações comerciais e canais
+│
+├── context/                       # Gerenciamento de Estado Global (React Context)
+│   ├── CartContext.tsx            # Gestão do carrinho, modo (atacado/varejo) e favoritos
+│   ├── AuthContext.tsx            # Autenticação de clientes e tipos de conta
+│   └── AdminContext.tsx           # Dados em memória de produtos, pedidos e loja
+│
+├── data/
+│   └── products.ts                # Modelos de dados e catálogo inicial
+│
+└── config/
+    └── store.ts                   # Configurações institucionais e links WhatsApp
+
+================================================================================
+3. FUNCIONALIDADES DETALHADAS POR MÓDULO
+================================================================================
+
+3.1. SISTEMA DUAL DE PRECIFICAÇÃO (VAREJO & ATACADO)
+- Alternador em Tempo Real: O cliente pode trocar entre "Varejo" e "Atacado" a 
+  qualquer momento na barra superior ou no carrinho.
+- Modo Varejo: Preço unitário sem exigência de quantidade ou valor mínimo.
+- Modo Atacado: Preço com desconto de fábrica (exibindo margem de lucro sugerida), 
+  com validação de pedido mínimo configurável (ex: R$ 600,00).
+- Exibição de Economia: Os cards e o carrinho mostram o percentual de desconto e o 
+  valor economizado ao comprar em atacado.
+
+3.2. EXPERIÊNCIA MOBILE E MENU SUPERIOR OTIMIZADO
+- Top Banner Informativo: Faixa condensada no mobile com mensagem de alto impacto.
+- Cabeçalho Otimizado: Altura reduzida (56px) com proporções refinadas do logotipo.
+- Barra de Pesquisa Integrada: Campo de busca de fácil acesso logo abaixo da marca, 
+  com botão de limpar e botão de envio tátil.
+- Chips de Busca Rápida: Atalhos horizontais para termos populares (ex: "Mais 
+  Vendidos", "Leggings", "Conjuntos", "Tops", "Shorts", "Sem Costura").
+- Barra Fixa Inferior (MobileBottomNav): 5 atalhos principais no rodapé do celular: 
+  Início, Catálogo, Grade Atacado B2B, Sacola de Compras e Conta/Login.
+
+3.3. BLOCO INTERATIVO DE OFERTAS DO DIA (PROMOÇÕES)
+- Banner Elegante com Contador Regressivo: Cronômetro em tempo real (Horas : Min : 
+  Seg) indicando o prazo da oferta e criando urgência de conversão.
+- Expansão Sob Clique: Para evitar sobrecarregar a página principal, as peças com 
+  desconto ficam recolhidas inicialmente e só são reveladas quando o usuário clica 
+  no card "Oferta do Dia".
+- Scroll Suave: Ao abrir as ofertas, a página realiza rolagem fluida para a grade 
+  de produtos promocionais.
+- Botão de Ocultar/Recolher: Permite fechar a vitrine de ofertas a qualquer momento.
+
+3.4. CATÁLOGO COMPLETO E FILTRAGEM INTELIGENTE
+- Filtros por Categoria: Conjuntos, Leggings, Tops, Shorts, Macacões, Seamless, etc.
+- Filtros por Departamento: Feminino, Masculino, Infantil.
+- Filtros por Tamanho: P, M, G, GG.
+- Ordenação Flexível: Relevância, Menor Preço, Maior Preço e Nome Alfabético.
+- Modos de Visualização: Grade (Grid) ou Lista (List).
+- Sincronização via URL: Parâmetros `?categoria=`, `?busca=` e `?q=` integrados 
+  com o campo de busca global.
+
+3.5. GRADE RÁPIDA DE ATACADO B2B (/lista-atacado)
+- Pensada especificamente para lojistas e revendedores abastecerem o estoque com 
+  velocidade.
+- Apresenta os produtos em tabela com seleção direta de matriz de quantidades por 
+  tamanho (P, M, G, GG) e cores disponíveis.
+- Subtotal dinâmico com inserção em massa no carrinho de compras.
+
+3.6. CARRINHO LATERAL (CartDrawer) & CHECKOUT WHATSAPP
+- Gaveta lateral deslizante que abre sem recarregar a página.
+- Barra de Progresso de Frete Grátis com valor restante dinâmico.
+- Barra de Progresso de Pedido Mínimo de Atacado.
+- Desconto Especial para Pagamento via PIX aplicado automaticamente.
+- Checkout Direto via WhatsApp: Gera mensagem formatada pronta para envio ao 
+  atendente comercial, contendo lista de itens, tamanhos, cores, subtotal, 
+  descontos e dados de entrega.
+
+3.7. ÁREA DO CLIENTE & AUTENTICAÇÃO (/conta)
+- Modal com separação clara de fluxo:
+  * Cliente Varejo: Cadastro simples com nome, e-mail, telefone e senha.
+  * Lojista / Atacado: Cadastro empresarial com CNPJ, Razão Social e status de 
+    análise cadastral (Liberado ou Em Análise).
+- Painel do Cliente com abas de:
+  * Perfil pessoal e dados da empresa.
+  * Histórico de pedidos realizados e rastreamento.
+  * Gestão de endereços de entrega.
+
+3.8. PAINEL ADMINISTRATIVO INTEGRADO (/admin)
+- Acesso seguro protegido por autenticação.
+- Dashboard Executivo: Faturamento total, pedidos em aberto, ticket médio e novos 
+  clientes cadastrados.
+- Gestão de Produtos:
+  * Cadastro e edição de produtos com SKU, fotos, tecidos e descrições.
+  * Configuração de preço de varejo e atacado.
+  * Gerenciamento de estoque por grade de cor e tamanho.
+  * Definição de destaques, novos lançamentos e produtos em promoção.
+- Gestão de Pedidos: Visualização detalhada e atualização de status (Pendente, 
+  Pago, Enviado, Concluído).
+- Gestão de Clientes: Aprovação ou reprovação de cadastros de lojistas de atacado.
+- Gestão de Banners: Upload e linkagem de banners para campanhas sazonais.
+- Configurações da Loja:
+  * Controle de canais (Ativação/Pausa de WhatsApp, Instagram, Shopee e Mercado Livre).
+  * Parâmetros comerciais (Pedido mínimo de atacado, desconto PIX, parcelamento).
+  * Informações de contato e horários de fábrica.
+
+================================================================================
+4. HISTÓRICO DAS PRINCIPAIS OTIMIZAÇÕES RECENTES
+================================================================================
+- Otimização do Menu Superior Mobile:
+  * Remoção do botão de menu hambúrguer duplicado no topo para dar espaço 
+    exclusivo à marca e aos controles essenciais.
+  * Implementação da barra de busca de 2ª linha com chips rápidos de navegação.
+  * Alternador de modalidade Varejo/Atacado super compacto em formato pill.
+- Reformulação da Seção de Ofertas:
+  * Criação do bloco interativo "Ofertas do Dia" abaixo dos destaques da loja.
+  * Sistema de expansão sob clique com contador regressivo e grade sob demanda.
+- Remoção do Bloco Estático de Atacado:
+  * Remoção do antigo container escuro de condições de atacado e seus botões 
+    estáticos para priorizar a navegação rápida por produtos.
+- Remoção da Seção Externa do Instagram:
+  * Otimização do fluxo da home removendo imagens pesadas de feed social.
+- Otimização das Políticas da Fábrica no Mobile:
+  * Estruturação dos 4 pilares em cards compactos horizontais com ícones 
+    dedicados e badges de confiança alinhados.
+- Otimização do Rodapé (Footer) no Mobile:
+  * Ajuste de espaçamento inferior seguro (pb-24) para compatibilidade com a 
+    barra de navegação móvel flutuante.
+  * Divisão dos links em duas colunas simétricas no mobile (Navegação e Canais).
+  * Novo card agrupado de Pagamento & Segurança com ícones explicativos.
+
+================================================================================
+5. INSTRUÇÕES DE EXECUÇÃO E IMPLANTAÇÃO
+================================================================================
+
+5.1. PRÉ-REQUISITOS
+- Node.js versão 18.17.0 ou superior (recomendado 20 LTS).
+- Gerenciador de pacotes npm, yarn ou pnpm.
+
+5.2. COMANDOS DISPONÍVEIS
+- Instalar dependências:
+  $ npm install
+
+- Executar em ambiente de desenvolvimento:
+  $ npm run dev
+  (Disponível em: http://localhost:3000)
+
+- Compilar para produção (Build):
+  $ npm run build
+
+- Iniciar servidor de produção:
+  $ npm run start
+
+- Executar checagem de linting:
+  $ npm run lint
+
+5.3. VARIÁVEIS DE AMBIENTE (.env.local)
+O projeto conta com arquivo `.env.example` para referência. As variáveis padrão 
+permitem a execução imediata em modo local com mocks em memória.
+
+================================================================================
+6. CONSIDERAÇÕES DE SEGURANÇA E PERFORMANCE
+================================================================================
+- Renderização Estática e Híbrida: Páginas públicas usam Static Site Generation 
+  (SSG) para tempos de resposta ultra-rápidos e pontuação máxima no Core Web Vitals.
+- Otimização de Imagens: Todas as imagens utilizam o componente `next/image` com 
+  conversão automática para formatos modernos (WebP/AVIF), lazy loading e `sizes` 
+  responsivo.
+- Tipagem Rígida: TypeScript ativo em 100% dos componentes e rotas com verificação 
+  de tipos durante o build.
+- Responsividade Total: Design fluido adaptado para telas a partir de 320px até 
+  monitores ultrawide (1720px+).
+
+================================================================================
+                          FIM DO RELATÓRIO TÉCNICO
+================================================================================

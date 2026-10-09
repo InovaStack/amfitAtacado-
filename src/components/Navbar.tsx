@@ -430,10 +430,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
               )}
             </div>
 
-            {/* Botão de Sacola / Carrinho */}
+            {/* Botão de Sacola / Carrinho (Apenas Desktop - no mobile fica no menu inferior) */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="h-9 sm:h-10 px-2.5 sm:px-3.5 bg-zinc-950 hover:bg-am-magenta text-white transition-all rounded-full flex items-center gap-1.5 sm:gap-2 shadow-xs group shrink-0"
+              className="hidden lg:flex h-9 sm:h-10 px-2.5 sm:px-3.5 bg-zinc-950 hover:bg-am-magenta text-white transition-all rounded-full items-center gap-1.5 sm:gap-2 shadow-xs group shrink-0"
               aria-label="Carrinho de Compras"
             >
               <ShoppingBag size={17} className="group-hover:scale-110 transition-transform" />
