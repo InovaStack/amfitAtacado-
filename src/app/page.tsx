@@ -52,7 +52,7 @@ export default function Home() {
         onClearSearch={() => setSearchFilter("")}
       />
 
-      {/* 5. Bloco Oficial de Atacado & Lucro 100% (Âncora #atacado) */}
+      {/* 5. Bloco de Atacado (sem container preto) */}
       <WholesaleCTA />
 
       {/* 6. Benefícios de Compra no Varejo */}

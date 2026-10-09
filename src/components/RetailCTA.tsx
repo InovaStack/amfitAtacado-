@@ -11,7 +11,7 @@ export const RetailCTA: React.FC = () => {
   const { openAuthModal, isAuthenticated } = useAuth();
 
   return (
-    <section id="varejo" className="py-20 bg-am-gray-50 border-b border-am-gray-200">
+    <section id="varejo" className="py-6 sm:py-10 lg:py-12 bg-am-gray-50/50 border-b border-am-gray-200">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         
         <div className="bg-white rounded-3xl border border-am-gray-200 shadow-xl overflow-hidden">

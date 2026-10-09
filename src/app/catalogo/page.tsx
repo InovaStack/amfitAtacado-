@@ -31,16 +31,26 @@ function CatalogContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("categoria") || "todos";
 
+  const initialSearch = searchParams.get("busca") || searchParams.get("q") || "";
+
   const { mode, setMode, setQuickViewProduct } = useCart();
   const { products } = useAdmin();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("todos");
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [sortBy, setSortBy] = useState<"destaque" | "menor-preco" | "maior-preco" | "nome">("destaque");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [mobileFilterOpen, setMobileFilterOpen] = useState<boolean>(false);
+
+  // Sincronizar busca caso o parâmetro na URL mude via navegação
+  React.useEffect(() => {
+    const q = searchParams.get("busca") || searchParams.get("q");
+    if (q !== null && q !== undefined) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
 
   // Filter products based on search, category, department, size
   const filteredProducts = useMemo(() => {
