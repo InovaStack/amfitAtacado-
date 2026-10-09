@@ -291,87 +291,114 @@ export const ContactSection: React.FC = () => {
         </div>
 
         {/* 2. Informações Gerais da Loja & Estrutura Expandida */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-zinc-200 shadow-sm">
-          <div className="flex items-center gap-2 pb-5 mb-6 border-b border-zinc-100">
-            <Sparkles size={20} className="text-am-magenta" />
-            <h3 className="font-black text-lg sm:text-xl text-am-black uppercase tracking-tight">
-              Informações Gerais & Políticas da Fábrica
-            </h3>
+        <div className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 border border-zinc-200/90 shadow-sm">
+          
+          {/* Header do Card */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-5 mb-5 sm:mb-6 border-b border-zinc-100 gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-pink-50 text-am-magenta flex items-center justify-center shrink-0">
+                <Sparkles size={18} />
+              </div>
+              <div>
+                <h3 className="font-black text-base sm:text-xl text-zinc-900 uppercase tracking-tight leading-tight">
+                  Informações Gerais & Políticas da Fábrica
+                </h3>
+                <p className="text-[11px] sm:text-xs text-zinc-500 font-medium">
+                  Transparência, garantias e canais institucionais oficiais
+                </p>
+              </div>
+            </div>
+            
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold text-zinc-600 bg-zinc-100 px-3 py-1 rounded-full border border-zinc-200/60 self-start sm:self-auto">
+              <ShieldCheck size={13} className="text-emerald-600" />
+              <span>Direto da Confecção</span>
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Cards de Políticas e Informações */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
             
             {/* 1. Horário de Atendimento */}
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-am-magenta flex items-center justify-center">
-                <Clock size={20} />
+            <div className="p-4 rounded-2xl bg-zinc-50/80 border border-zinc-100/90 hover:border-am-magenta/30 transition-all flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white text-am-magenta shadow-2xs border border-zinc-200/80 flex items-center justify-center shrink-0">
+                <Clock size={19} />
               </div>
-              <h4 className="font-black text-sm text-am-black">Horário de Atendimento</h4>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                {storeConfig.contact.hours}
-              </p>
+              <div className="space-y-1 min-w-0">
+                <h4 className="font-black text-xs sm:text-sm text-zinc-900 leading-tight">Horário de Atendimento</h4>
+                <p className="text-[11px] sm:text-xs text-zinc-600 leading-relaxed">
+                  {storeConfig.contact.hours}
+                </p>
+              </div>
             </div>
 
             {/* 2. Fábrica & Envio */}
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-am-magenta-light text-am-magenta flex items-center justify-center">
-                <MapPin size={20} />
+            <div className="p-4 rounded-2xl bg-zinc-50/80 border border-zinc-100/90 hover:border-am-magenta/30 transition-all flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-am-magenta-light text-am-magenta shadow-2xs border border-am-magenta-border flex items-center justify-center shrink-0">
+                <MapPin size={19} />
               </div>
-              <h4 className="font-black text-sm text-am-black">Origem & Polo Têxtil</h4>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                {storeConfig.policies.factoryOrigin}
-              </p>
+              <div className="space-y-1 min-w-0">
+                <h4 className="font-black text-xs sm:text-sm text-zinc-900 leading-tight">Origem & Polo Têxtil</h4>
+                <p className="text-[11px] sm:text-xs text-zinc-600 leading-relaxed">
+                  {storeConfig.policies.factoryOrigin}
+                </p>
+              </div>
             </div>
 
             {/* 3. Contato Institucional & E-mail */}
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-am-magenta flex items-center justify-center">
-                <Mail size={20} />
+            <div className="p-4 rounded-2xl bg-zinc-50/80 border border-zinc-100/90 hover:border-am-magenta/30 transition-all flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white text-am-magenta shadow-2xs border border-zinc-200/80 flex items-center justify-center shrink-0">
+                <Mail size={19} />
               </div>
-              <h4 className="font-black text-sm text-am-black">E-mail Comercial</h4>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                <a 
-                  href={`mailto:${storeConfig.contact.email}`} 
-                  className="font-bold text-am-magenta hover:underline"
-                >
-                  {storeConfig.contact.email}
-                </a><br />
-                {storeConfig.contact.salesEmail && (
-                  <span className="text-zinc-500">Vendas: {storeConfig.contact.salesEmail}</span>
-                )}
-              </p>
+              <div className="space-y-1 min-w-0">
+                <h4 className="font-black text-xs sm:text-sm text-zinc-900 leading-tight">E-mail Comercial</h4>
+                <div className="text-[11px] sm:text-xs text-zinc-600 leading-relaxed truncate">
+                  <a 
+                    href={`mailto:${storeConfig.contact.email}`} 
+                    className="font-bold text-am-magenta hover:underline block truncate"
+                  >
+                    {storeConfig.contact.email}
+                  </a>
+                  {storeConfig.contact.salesEmail && (
+                    <span className="text-zinc-500 block text-[10px] sm:text-[11px] truncate mt-0.5">
+                      Vendas: {storeConfig.contact.salesEmail}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* 4. Garantia & 1ª Troca */}
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <ShieldCheck size={20} />
+            <div className="p-4 rounded-2xl bg-zinc-50/80 border border-zinc-100/90 hover:border-am-magenta/30 transition-all flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs border border-emerald-200/80 flex items-center justify-center shrink-0">
+                <ShieldCheck size={19} />
               </div>
-              <h4 className="font-black text-sm text-am-black">Garantia & 1ª Troca</h4>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                {storeConfig.policies.warrantyAndExchange}
-              </p>
+              <div className="space-y-1 min-w-0">
+                <h4 className="font-black text-xs sm:text-sm text-zinc-900 leading-tight">Garantia & 1ª Troca</h4>
+                <p className="text-[11px] sm:text-xs text-zinc-600 leading-relaxed">
+                  {storeConfig.policies.warrantyAndExchange}
+                </p>
+              </div>
             </div>
 
           </div>
 
-          {/* Faixa inferior de confiança */}
-          <div className="mt-8 pt-6 border-t border-zinc-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span>Fabricação Nacional 100% Própria</span>
+          {/* Faixa inferior de confiança - Badges responsivos */}
+          <div className="mt-5 sm:mt-7 pt-4 sm:pt-5 border-t border-zinc-100 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50/60 border border-zinc-200/60">
+              <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+              <span className="text-[11px] font-bold text-zinc-700 leading-tight">Fabricação 100% Própria</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span>Compra Direta Sem Intermediários</span>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50/60 border border-zinc-200/60">
+              <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+              <span className="text-[11px] font-bold text-zinc-700 leading-tight">Sem Intermediários</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span>Envio Rastreado no WhatsApp</span>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50/60 border border-zinc-200/60">
+              <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+              <span className="text-[11px] font-bold text-zinc-700 leading-tight">Envio 100% Rastreado</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-zinc-700">
-              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-              <span>Qualidade Premium Comprovada</span>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50/60 border border-zinc-200/60">
+              <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+              <span className="text-[11px] font-bold text-zinc-700 leading-tight">Qualidade Premium</span>
             </div>
           </div>
 
