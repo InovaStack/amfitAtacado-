@@ -7,7 +7,6 @@ import { CategoriesSection } from "@/components/CategoriesSection";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { PromoSection } from "@/components/PromoSection";
 import { RetailCTA } from "@/components/RetailCTA";
-import { InstagramFeed } from "@/components/InstagramFeed";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { useAdmin } from "@/context/AdminContext";
@@ -58,13 +57,10 @@ export default function Home() {
       {/* 6. Benefícios de Compra no Varejo */}
       <RetailCTA />
 
-      {/* 7. Comunidade & Instagram */}
-      <InstagramFeed />
-
-      {/* 8. FAQ e Atendimento */}
+      {/* 7. FAQ e Atendimento */}
       <ContactSection />
 
-      {/* 9. Rodapé */}
+      {/* 8. Rodapé */}
       <Footer />
     </main>
   );
