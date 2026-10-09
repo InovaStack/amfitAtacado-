@@ -5,7 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroBanner } from "@/components/HeroBanner";
 import { CategoriesSection } from "@/components/CategoriesSection";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { WholesaleCTA } from "@/components/WholesaleCTA";
+import { PromoSection } from "@/components/PromoSection";
 import { RetailCTA } from "@/components/RetailCTA";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { ContactSection } from "@/components/ContactSection";
@@ -52,8 +52,8 @@ export default function Home() {
         onClearSearch={() => setSearchFilter("")}
       />
 
-      {/* 5. Bloco de Atacado (sem container preto) */}
-      <WholesaleCTA />
+      {/* 5. Bloco de Ofertas da Loja */}
+      <PromoSection products={products} />
 
       {/* 6. Benefícios de Compra no Varejo */}
       <RetailCTA />
